@@ -5,9 +5,7 @@ import {
   motion,
   useMotionValue,
   useReducedMotion,
-  useScroll,
   useSpring,
-  useTransform,
 } from "motion/react";
 import type { PointerEvent } from "react";
 import { ArrowUpRight, PhoneCall } from "lucide-react";
@@ -26,10 +24,7 @@ const BARS = [38, 62, 46, 78, 58, 92, 70, 100];
 
 export function Hero() {
   const reduced = useReducedMotion();
-  const { scrollY } = useScroll();
-  const bgY = useTransform(scrollY, [0, 900], [0, 150]);
-
-  // Pointer parallax for the ambient glows — desktop pointers only.
+  // Pointer parallax for the ambient glows, desktop pointers only.
   const px = useMotionValue(0);
   const py = useMotionValue(0);
   const glowX = useSpring(px, { stiffness: 35, damping: 18 });
@@ -48,11 +43,9 @@ export function Hero() {
       data-testid="hero-section"
       className="relative flex min-h-screen flex-col justify-center overflow-hidden pb-16 pt-28 md:pt-32 lg:pb-14"
     >
-      <motion.div
-        aria-hidden="true"
-        style={reduced ? undefined : { y: bgY }}
-        className="absolute inset-0 -z-10"
-      >
+      {/* Parallax is a CSS scroll timeline now, so it runs off the main
+          thread instead of a rAF loop reacting to scroll events. */}
+      <div aria-hidden="true" className="scroll-parallax absolute inset-0 -z-10">
         <Image
           src="/hero-bg.webp"
           alt=""
@@ -68,7 +61,7 @@ export function Hero() {
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-transparent to-ink" />
-      </motion.div>
+      </div>
 
       <div
         aria-hidden="true"
@@ -97,7 +90,7 @@ export function Hero() {
               transition={{ duration: 0.6, ease: EASE }}
               className="eyebrow"
             >
-              {"// Klixora — Digital Growth Partner"}
+              {"// Klixora · Digital Growth Partner"}
             </motion.p>
 
             <h1 className="mt-6 font-display text-[clamp(1.5rem,9vw,2.6rem)] font-extrabold uppercase leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
@@ -133,7 +126,7 @@ export function Hero() {
               transition={{ duration: 0.7, delay: 0.5, ease: EASE }}
               className="mt-7 max-w-xl text-sm leading-relaxed text-slate-400 sm:text-base"
             >
-              More than a digital agency — architects of growth strategies,
+              More than a digital agency. We are architects of growth strategies,
               engineers of digital presence, and the partner you call when
               you&apos;re serious about scaling.
             </motion.p>
@@ -147,7 +140,7 @@ export function Hero() {
               <Cta href="#contact" data-testid="hero-cta-enquire">
                 Enquire Now <ArrowUpRight size={16} />
               </Cta>
-              {/* Outlined twin of the primary — same pill, same weight, so the
+              {/* Outlined twin of the primary: same pill, same weight, so the
                   two CTAs read as a pair rather than a button and a link. */}
               <Cta
                 href="#contact"

@@ -45,12 +45,12 @@ export async function submitEnquiry(
   }
 
   // Lead storage is not connected yet. Without credentials nothing is sent
-  // anywhere — we fail loudly rather than reporting a success that silently
+  // anywhere. We fail loudly rather than reporting a success that silently
   // drops a real enquiry. Populate .env.local to switch this on.
   const supabase = getSupabaseClient();
   if (!supabase) {
     console.warn(
-      "[submitEnquiry] No lead store configured — enquiry was validated but not saved.",
+      "[submitEnquiry] No lead store configured. Enquiry was validated but not saved.",
     );
     return {
       ok: false,

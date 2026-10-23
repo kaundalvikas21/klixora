@@ -12,7 +12,7 @@ export function BrandMarquee() {
 
       <div className="marquee-paused overflow-hidden" data-testid="clients-marquee">
         <div className="flex w-max animate-marquee">
-          {/* Track is duplicated so the -50% keyframe loops seamlessly. */}
+          {/* Track is duplicated so the -50% keyframe loops without a visible jump. */}
           {[0, 1].map((copy) => (
             <div
               key={copy}

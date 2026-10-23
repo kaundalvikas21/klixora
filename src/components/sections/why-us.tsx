@@ -21,7 +21,7 @@ export function WhyUs() {
           <span className="text-gradient">built to win.</span>
         </h2>
         <p className="mt-4 max-w-2xl text-sm leading-relaxed text-slate-400 sm:text-base">
-          All the solutions under one roof — managed end-to-end by a team
+          All the solutions under one roof, managed end to end by a team
           obsessed with measurable impact.
         </p>
       </Reveal>

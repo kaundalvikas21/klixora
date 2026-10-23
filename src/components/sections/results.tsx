@@ -11,7 +11,7 @@ export function Results() {
           {"// Results That Speak"}
         </p>
         <h2 className="mt-4 max-w-3xl font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-          We don&apos;t just say it —{" "}
+          We don&apos;t just say it.{" "}
           <span className="text-gradient">we say it out loud.</span>
         </h2>
       </Reveal>

@@ -28,7 +28,7 @@ export function Services() {
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-slate-400 sm:text-base">
             Instead of juggling multiple agencies, you get everything under one
-            roof — ads, organic presence, and everything your business needs to
+            roof: ads, organic presence, and everything your business needs to
             grow online.
           </p>
         </div>

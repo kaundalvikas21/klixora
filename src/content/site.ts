@@ -1,9 +1,9 @@
 export const site = {
   name: "Klixora",
   tagline: "Growth Driven Digital Strategy",
-  title: "Klixora — Growth Driven Digital Strategy for Bold Brands",
+  title: "Klixora: Growth Driven Digital Strategy for Bold Brands",
   description:
-    "Klixora — Growth Driven Digital Strategy for Bold Brands. Paid ads, SEO, social media, e-commerce and marketplace growth under one roof.",
+    "Klixora: Growth Driven Digital Strategy for Bold Brands. Paid ads, SEO, social media, e-commerce and marketplace growth under one roof.",
   url: "https://klixora.site",
   logo: "/klixora-logo-white.webp",
   address: "Vardhman City, Kurukshetra, Haryana",
@@ -46,7 +46,7 @@ export const serviceOptions = [
   "Event Management",
 ] as const;
 
-/** Footer service column — labels only; they all route to the services section. */
+/** Footer service column. Labels only; they all route to the services section. */
 export const footerServices = [
   "Website Audit & Strategy",
   "Social Media Marketing",

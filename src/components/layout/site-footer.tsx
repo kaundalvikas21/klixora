@@ -51,7 +51,7 @@ export function SiteFooter() {
               />
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-400">
-              {site.tagline} — paid ads, SEO, social and marketplace growth,
+              {site.tagline}. Paid ads, SEO, social and marketplace growth,
               managed end to end by one team.
             </p>
 

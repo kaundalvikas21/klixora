@@ -90,7 +90,7 @@ export function ContactForm() {
           <Check size={24} />
         </span>
         <h3 className="mt-6 font-display text-xl font-bold text-white">
-          Thanks — that&apos;s everything we need.
+          Thanks, that&apos;s everything we need.
         </h3>
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-400">
           A real person will reply within 24 hours. No autoresponder, no pitch
@@ -221,7 +221,7 @@ export function ContactForm() {
                   onChange={set("service")}
                   aria-invalid={Boolean(errors.service)}
                 >
-                  <option value="">Select a service…</option>
+                  <option value="">Select a service...</option>
                   {serviceOptions.map((option) => (
                     <option key={option} value={option}>
                       {option}
@@ -237,7 +237,7 @@ export function ContactForm() {
                   className="input-glass resize-none"
                   name="message"
                   rows={5}
-                  placeholder="Budget, timeline, what you have tried so far…"
+                  placeholder="Budget, timeline, what you have tried so far"
                   value={values.message}
                   onChange={set("message")}
                 />
@@ -266,7 +266,7 @@ export function ContactForm() {
 
         {isLast ? (
           <CtaButton type="submit" size="md" disabled={pending} data-testid="form-submit">
-            {pending ? "Sending…" : "Send enquiry"} <Send size={14} />
+            {pending ? "Sending..." : "Send enquiry"} <Send size={14} />
           </CtaButton>
         ) : (
           <CtaButton type="button" size="md" onClick={handleNext} data-testid="form-next">

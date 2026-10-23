@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 /**
- * Route-segment boundary. Note this does NOT cover the root layout —
+ * Route-segment boundary. This does not cover the root layout;
  * global-error.tsx handles that.
  */
 export default function Error({

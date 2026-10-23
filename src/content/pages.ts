@@ -19,7 +19,7 @@ export type PageContent = {
   titleLines: TitleSegment[][];
   sub: string;
   ctaPrimary: string;
-  /** Icon for the hero CTA — picked to match the action, not a generic arrow. */
+  /** Icon for the hero CTA, picked to match the action rather than a generic arrow. */
   ctaPrimaryIcon: LucideIcon;
   heroImg: string;
   heroAlt: string;
@@ -29,12 +29,12 @@ export type PageContent = {
   introTitle: SplitHeading;
   introText: string;
   services: { title: string; desc: string }[];
-  /** Agri only — the "what goes wrong" grid. */
+  /** Agri only: the "what goes wrong" grid. */
   problemsEyebrow?: string;
   problemsTitle?: SplitHeading;
   problemsSub?: string;
   problems?: { title: string; desc: string }[];
-  /** Events only — the 3×3 image grid. */
+  /** Events only: the 3x3 image grid. */
   expertiseEyebrow?: string;
   expertiseTitle?: SplitHeading;
   expertise?: { label: string; src: string }[];
@@ -53,13 +53,13 @@ export type PageContent = {
 
 export const agriContent: PageContent = {
   slug: "agri-marketing",
-  docTitle: "Agri Marketing — Klixora",
+  docTitle: "Agri Marketing | Klixora",
   eyebrow: "// Klixora · Agri Marketing",
   titleLines: [
     [{ t: "AGRI MARKETING", gradient: true }],
     [{ t: "BUILT FOR " }, { t: "RURAL INDIA", gradient: true }],
   ],
-  sub: "Klixora helps agri brands connect with rural audiences through digital, offline-first, and insight-led communication. From performance marketing to mass audio engagement and research-driven campaigns — strategies that work where it matters most.",
+  sub: "Klixora helps agri brands connect with rural audiences through digital, offline-first, and insight-led communication. From performance marketing to mass audio engagement and research-driven campaigns, these are strategies that work where it matters most.",
   ctaPrimary: "Book Strategy Call",
   ctaPrimaryIcon: CalendarCheck,
   heroImg: "/pages/agri-hero.webp",
@@ -68,7 +68,7 @@ export const agriContent: PageContent = {
   introEyebrow: "// Our Services",
   introTitle: { lead: "End-to-end marketing solutions ", accent: "for agri brands" },
   introText:
-    "Agri marketing is changing fast — today's farmers use phones, social platforms, audio channels, and digital touchpoints to discover and trust brands. Klixora offers a complete suite of performance-driven, farmer-friendly marketing services designed specifically for rural India.",
+    "Agri marketing is changing fast. Today's farmers use phones, social platforms, audio channels, and digital touchpoints to discover and trust brands. Klixora offers a complete suite of performance-driven, farmer-friendly marketing services designed specifically for rural India.",
   services: [
     {
       title: "Performance Marketing & SEO for Agri Brands",
@@ -115,14 +115,14 @@ export const agriContent: PageContent = {
   ctaEyebrow: "// Real Strategies. Real Results.",
   ctaTitle: "Ready to grow your agri brand?",
   ctaSub:
-    "Whether your goal is to engage farmers, gather insights, or scale your digital presence — Klixora helps you build meaningful conversations that create real impact.",
+    "Whether your goal is to engage farmers, gather insights, or scale your digital presence, Klixora helps you build meaningful conversations that create real impact.",
   ctaLabel: "Let's Connect",
   ctaBandIcon: Handshake,
 };
 
 export const eventsContent: PageContent = {
   slug: "event-management",
-  docTitle: "Event Management — Klixora",
+  docTitle: "Event Management | Klixora",
   eyebrow: "// Klixora · Event Management",
   titleLines: [
     [{ t: "CREATE " }, { t: "EVENTS", gradient: true }],
@@ -141,7 +141,7 @@ export const eventsContent: PageContent = {
   introEyebrow: "// Our Services",
   introTitle: { lead: "End-to-end ", accent: "event solutions" },
   introText:
-    "Klixora helps businesses plan, design, manage, and execute professional events with creativity and precision. Corporate event, product launch, exhibition, or brand activation — every event delivers a memorable experience.",
+    "Klixora helps businesses plan, design, manage, and execute professional events with creativity and precision. Corporate event, product launch, exhibition, or brand activation, every event delivers a memorable experience.",
   services: [
     { title: "Event Design & Production", desc: "From stage setup to event production, we design immersive experiences that reflect your brand and engage your audience." },
     { title: "Stage & Stall Design", desc: "Custom-designed stages and exhibition stalls that maximize brand visibility and create engaging visitor experiences." },

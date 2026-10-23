@@ -18,7 +18,7 @@ export function StatCounter({ value, suffix, label, id }: Props) {
 
   useEffect(() => {
     // Reduced motion is handled by deriving `shown` below, so the effect only
-    // ever runs the animation itself — no synchronous setState on mount.
+    // ever runs the animation itself, with no synchronous setState on mount.
     if (!inView || reduced) return;
 
     const start = performance.now();

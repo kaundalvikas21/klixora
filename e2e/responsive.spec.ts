@@ -31,7 +31,7 @@ test.describe("responsive layout", () => {
         await page.goto(route);
 
         // html carries overflow-x:clip, so scrollWidth can never report
-        // overflow. Content that bleeds is simply cut off and invisible —
+        // overflow. Content that bleeds is simply cut off and invisible, so
         // element boxes are the only honest signal.
         const contentOverflow = await page.evaluate(() => {
           const out: string[] = [];
@@ -211,7 +211,7 @@ test.describe("footer", () => {
   test("link columns sit two-up on phones and expand on desktop", async ({
     page,
   }) => {
-    // Narrowest realistic phone first — two columns must still fit.
+    // Narrowest realistic phone first; two columns must still fit.
     await page.setViewportSize({ width: 320, height: 568 });
     await page.goto("/");
     expect(await columnCount(page, '[data-testid="site-footer"] .grid')).toBe(2);

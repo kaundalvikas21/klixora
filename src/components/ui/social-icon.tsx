@@ -2,7 +2,7 @@ import type { SVGProps } from "react";
 
 /**
  * Lucide v1 removed brand marks for trademark reasons, so the official paths
- * are inlined here — the same approach already used for the WhatsApp button.
+ * are inlined here, the same approach already used for the WhatsApp button.
  */
 const PATHS: Record<string, string> = {
   linkedin:

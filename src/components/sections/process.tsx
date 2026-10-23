@@ -1,21 +1,13 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useSpring } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { Reveal } from "@/components/motion/reveal";
 import { Section } from "@/components/ui/section";
 import { processSteps } from "@/content/home";
 import { EASE, VIEWPORT } from "@/utils/motion";
 
 export function Process() {
-  const trackRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
-
-  const { scrollYProgress } = useScroll({
-    target: trackRef,
-    offset: ["start 75%", "end 70%"],
-  });
-  const progress = useSpring(scrollYProgress, { stiffness: 80, damping: 24 });
 
   return (
     <Section
@@ -40,7 +32,7 @@ export function Process() {
                 <span className="text-gradient">One obsession.</span>
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-slate-400 sm:text-base">
-                A process engineered to take your brand from audit to scale —
+                A process engineered to take your brand from audit to scale,
                 with full transparency at every step.
               </p>
               <span className="glass mt-7 inline-flex items-center gap-2 rounded-full px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-300">
@@ -51,16 +43,15 @@ export function Process() {
           </div>
         </div>
 
-        <div ref={trackRef} className="relative lg:col-span-8">
+        <div className="relative lg:col-span-8">
           {/* Rail, with a progress line that fills as the section scrolls past. */}
           <div
             aria-hidden="true"
             className="absolute left-[7px] top-2 h-full w-px bg-white/8"
           >
-            <motion.div
-              style={reduced ? { scaleY: 1 } : { scaleY: progress }}
-              className="h-full w-px origin-top bg-gradient-to-b from-cyan-300 to-violet-500"
-            />
+            {/* Fills from a CSS view() timeline, so it tracks scroll without
+                a JS listener on the main thread. */}
+            <div className="scroll-rail h-full w-px origin-top bg-gradient-to-b from-cyan-300 to-violet-500" />
           </div>
 
           <ol className="flex flex-col gap-5">

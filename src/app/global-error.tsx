@@ -4,7 +4,7 @@
  * Catches throws in the root layout, which error.tsx cannot reach.
  *
  * This file replaces the root layout when active, so it must render its own
- * <html>/<body> — and global CSS does NOT load here, which is why every style
+ * <html>/<body>. Global CSS does not load here, which is why every style
  * below is inline rather than a Tailwind class.
  */
 export default function GlobalError({
@@ -38,7 +38,7 @@ export default function GlobalError({
             "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
         }}
       >
-        <title>Something went wrong — Klixora</title>
+        <title>Something went wrong | Klixora</title>
         <p
           style={{
             margin: 0,
@@ -71,7 +71,7 @@ export default function GlobalError({
           }}
         >
           Something failed before the site could start. Trying again usually
-          fixes it — if it does not, email{" "}
+          fixes it. If it does not, email{" "}
           <a href="mailto:Info@Klixora.site" style={{ color: "#22d3ee" }}>
             Info@Klixora.site
           </a>
