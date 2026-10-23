@@ -6,13 +6,14 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import { Cta } from "@/components/ui/cta";
-import { navLinks, sectionIds, site } from "@/content/site";
+import { navLinks, sectionIds } from "@/content/site";
+import type { SiteSettingsView } from "@/server/content";
 import { useActiveSection } from "@/hooks/use-active-section";
 import { useLockBody } from "@/hooks/use-lock-body";
 import { useScrolled } from "@/hooks/use-scrolled";
 import { cn } from "@/utils/cn";
 
-export function SiteHeader() {
+export function SiteHeader({ settings }: { settings: SiteSettingsView }) {
   const [open, setOpen] = useState(false);
   const scrolled = useScrolled();
   const pathname = usePathname();
@@ -36,12 +37,15 @@ export function SiteHeader() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  /** A link is active when its section is in view, or its route is current. */
-  function isActive(href: string) {
-    if (href.startsWith("#")) {
-      return pathname === "/" && `#${activeSection}` === href;
+  /**
+   * A section link is active when that section is in view on the home page.
+   * A route link is active on its own route and anything beneath it.
+   */
+  function isActive(link: (typeof navLinks)[number]) {
+    if ("section" in link && link.section) {
+      return pathname === "/" && activeSection === link.section;
     }
-    return pathname === href;
+    return pathname === link.href || pathname.startsWith(`${link.href}/`);
   }
 
   function close() {
@@ -62,20 +66,27 @@ export function SiteHeader() {
       >
         {/* Hash-only hrefs resolve against the current route, so the same links
             work on the home page and on both vertical pages. */}
-        <Link href="/#top" className="shrink-0" aria-label={`${site.name} home`}>
+        <Link
+          href="/#top"
+          className="shrink-0"
+          aria-label={`${settings.brandName} home`}
+        >
+          {/* Height comes from Site Settings; the intrinsic size stays fixed
+              so next/image can still reserve the right box. */}
           <Image
-            src={site.logo}
-            alt={site.name}
+            src={settings.logoUrl || "/klixora-logo-white.webp"}
+            alt={settings.logoAlt}
             width={428}
             height={113}
             priority
-            className="h-7 w-auto sm:h-8"
+            className="w-auto"
+            style={{ height: settings.logoHeight }}
           />
         </Link>
 
         <ul className="hidden items-center gap-7 lg:flex">
           {navLinks.map((link) => {
-            const active = isActive(link.href);
+            const active = isActive(link);
             return (
               <li key={link.label}>
                 <Link
@@ -147,7 +158,7 @@ export function SiteHeader() {
         >
           <ul className="flex flex-col divide-y divide-white/5">
             {navLinks.map((link) => {
-              const active = isActive(link.href);
+              const active = isActive(link);
               return (
                 <li key={link.label}>
                   <Link

@@ -2,10 +2,18 @@ import type { ReactNode } from "react";
 import { cn } from "@/utils/cn";
 
 /**
- * The site's vertical rhythm and horizontal gutters live here and nowhere else.
- * Change these two strings and every section follows.
+ * The site's vertical rhythm and horizontal gutters live here and nowhere
+ * else. Change these two strings and every section follows.
+ *
+ * The padding is symmetric, and each side is HALF a gap. Two stacked
+ * sections therefore meet at one full gap, not two, which is what made the
+ * old `py-32` read as a dead band against a shared background. Keeping both
+ * sides also means every section owns visible space below its own content,
+ * so a section that ends on something short (a carousel's dots, a short
+ * column) still closes properly, and a section with its own surface (the
+ * CTA band on the vertical pages) is never flush against the one above it.
  */
-const SECTION_Y = "py-20 md:py-24 lg:py-32";
+const SECTION_Y = "py-12 md:py-14 lg:py-16";
 const CONTAINER_X = "mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12";
 
 type ContainerProps = {

@@ -1,8 +1,9 @@
 import { expect, test } from "@playwright/test";
+import { gotoReady } from "./ready";
 
 test.describe("scroll behaviour", () => {
   test("nothing intercepts the wheel", async ({ page }) => {
-    await page.goto("/");
+    await gotoReady(page, "/");
 
     // A hijacking library attaches a non-passive wheel listener so it can call
     // preventDefault. If one ever gets added back, this catches it.
@@ -26,7 +27,7 @@ test.describe("scroll behaviour", () => {
   test("scroll-linked motion runs on scroll timelines, not a rAF loop", async ({
     page,
   }) => {
-    await page.goto("/");
+    await gotoReady(page, "/");
 
     const supported = await page.evaluate(() =>
       CSS.supports("animation-timeline: scroll()"),
@@ -44,7 +45,7 @@ test.describe("scroll behaviour", () => {
   });
 
   test("hero backdrop parallax tracks the scroll position", async ({ page }) => {
-    await page.goto("/");
+    await gotoReady(page, "/");
     const supported = await page.evaluate(() =>
       CSS.supports("animation-timeline: scroll()"),
     );
@@ -70,7 +71,7 @@ test.describe("scroll behaviour", () => {
   });
 
   test("anchor targets clear the fixed header", async ({ page }) => {
-    await page.goto("/");
+    await gotoReady(page, "/");
     await page
       .getByTestId("site-header")
       .getByRole("link", { name: "Services", exact: true })

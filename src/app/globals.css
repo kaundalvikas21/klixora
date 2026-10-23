@@ -61,6 +61,15 @@
   --color-brand-cyan: var(--cyan);
   --color-brand-violet: var(--violet);
 
+  /* Admin shell breakpoints.
+     Named, not arbitrary `rail:` utilities. Tailwind v4 sorts
+     arbitrary min-width variants ahead of the named scale regardless of
+     their value, so `sm:grid-cols-2` was emitted AFTER
+     `wide:grid-cols-4` and won at every width above 1180px. Named
+     breakpoints sort by value alongside sm/md/lg and cascade correctly. */
+  --breakpoint-rail: 56.25rem;  /* 900px: icon rail appears */
+  --breakpoint-wide: 73.75rem;  /* 1180px: rail expands, editors go two-up */
+
   --font-display: var(--font-syne), sans-serif;
   --font-sans: var(--font-jakarta), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), monospace;
@@ -305,5 +314,89 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Admin tables.
+
+   Below 720px every row becomes a labelled card and each cell keeps its
+   column name as a prefix, pulled from the cell's own data-label. Done in CSS
+   rather than by rendering a second card list, so there is one DOM to keep
+   correct and nothing duplicated for a screen reader to read twice.
+   -------------------------------------------------------------------------- */
+@utility responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+
+  & th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    font-weight: 400;
+    padding: 0.625rem 0.75rem;
+    white-space: nowrap;
+  }
+
+  & td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    color: #e2e8f0;
+    border-top: 1px solid #ffffff0f;
+  }
+
+  @media (width < 45rem) {
+    & thead {
+      /* The column names move into the cells, so the header row has no job. */
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    & tr {
+      display: block;
+      border: 1px solid #ffffff14;
+      border-radius: var(--radius);
+      background: #ffffff05;
+      padding: 0.25rem 0.75rem 0.5rem;
+      margin-bottom: 0.625rem;
+    }
+
+    & td {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      border-top: 0;
+      padding: 0.4375rem 0;
+      text-align: right;
+    }
+
+    & td + td {
+      border-top: 1px solid #ffffff0a;
+    }
+
+    & td[data-label]::before {
+      content: attr(data-label);
+      flex: 0 0 auto;
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      text-align: left;
+    }
+
+    /* A cell that holds the row's identity reads better full width. */
+    & td[data-label=""]::before {
+      content: none;
+    }
   }
 }
