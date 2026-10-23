@@ -1,0 +1,222 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ---------------------------------------------------------------------------
+   Klixora design tokens.
+   Values ported verbatim from the reference build (main.3a460d4f.css :root).
+   --------------------------------------------------------------------------- */
+:root {
+  /* brand */
+  --ink: #07090e;
+  --surface: #0e131f;
+  --cyan: #22d3ee;
+  --violet: #8b5cf6;
+
+  /* shadcn surface scale */
+  --background: hsl(225 33% 4%);
+  --foreground: hsl(210 40% 98%);
+  --card: hsl(221 36% 9%);
+  --card-foreground: hsl(210 40% 98%);
+  --popover: hsl(221 36% 9%);
+  --popover-foreground: hsl(210 40% 98%);
+  --primary: hsl(258 90% 66%);
+  --primary-foreground: hsl(210 40% 98%);
+  --secondary: hsl(221 30% 14%);
+  --secondary-foreground: hsl(210 40% 98%);
+  --muted: hsl(221 30% 14%);
+  --muted-foreground: hsl(215 20% 65%);
+  --accent: hsl(189 94% 53%);
+  --accent-foreground: hsl(225 33% 4%);
+  --destructive: hsl(0 72% 51%);
+  --destructive-foreground: hsl(210 40% 98%);
+  --border: hsl(220 26% 14%);
+  --input: hsl(220 26% 14%);
+  --ring: hsl(258 90% 66%);
+  --radius: 0.75rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-ink: var(--ink);
+  --color-surface: var(--surface);
+  --color-brand-cyan: var(--cyan);
+  --color-brand-violet: var(--violet);
+
+  --font-display: var(--font-syne), sans-serif;
+  --font-sans: var(--font-jakarta), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), monospace;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --animate-marquee: marquee 32s linear infinite;
+  --animate-float-y: float-y 6s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 3.2s ease-in-out infinite;
+  --animate-spin-slow: spin-slow 18s linear infinite;
+
+  @keyframes marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  @keyframes float-y {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-14px); }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.55; }
+    50%      { opacity: 1; }
+  }
+  @keyframes spin-slow {
+    100% { transform: rotate(1turn); }
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    overflow-x: clip;
+    scroll-behavior: auto; /* Lenis drives smooth scroll; see lenis-provider */
+  }
+  body {
+    background-color: var(--ink);
+    color: #f1f5f9;
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Lenis disables native smoothing while it is active. */
+  html.lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  :focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Signature utilities (ported verbatim from the reference stylesheet)
+   -------------------------------------------------------------------------- */
+@utility glass {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: #0e131f8c;
+  border: 1px solid #ffffff14;
+}
+
+@utility glass-strong {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  background: #0e131fc7;
+  border: 1px solid #ffffff1a;
+}
+
+@utility eyebrow {
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+@utility text-gradient {
+  background: linear-gradient(92deg, #22d3ee, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility input-glass {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #ffffff1a;
+  background-color: #ffffff0a;
+  color: #f1f5f9;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition-property: color, background-color, border-color, box-shadow;
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+
+  &::placeholder {
+    color: #64748b;
+  }
+  &:focus {
+    background-color: #ffffff0f;
+    border-color: #22d3ee99;
+    box-shadow: 0 0 0 3px #22d3ee1f, 0 0 24px -6px #22d3ee59;
+  }
+  & option {
+    background-color: #0e131f;
+    color: #f1f5f9;
+  }
+}
+
+@utility bg-grid {
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.055) 1px, transparent 0),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.055) 1px, transparent 0);
+  background-size: 72px 72px;
+}
+
+@utility shadow-glow-cyan {
+  box-shadow: 0 0 48px -10px #22d3ee73;
+}
+
+@utility shadow-glow-violet {
+  box-shadow: 0 0 48px -10px #8b5cf680;
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility marquee-paused {
+  &:hover .animate-marquee {
+    animation-play-state: paused;
+  }
+}
+
+/* Respect the user's motion preference across every ported animation. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
