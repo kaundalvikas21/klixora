@@ -1,41 +1,65 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowLeft, ArrowRight, Check, Send } from "lucide-react";
 import { CtaButton } from "@/components/ui/cta";
-import { submitEnquiry } from "@/services/leads";
-import { formSteps } from "@/content/home";
-import { serviceOptions } from "@/content/site";
+import { submitEnquiry } from "@/server/actions/leads-public";
+import { leadSubmissionSchema } from "@/lib/schemas/leads";
+import type { LeadSubmitResult } from "@/lib/schemas/leads";
+import { DIRECT_SOURCE, readLeadSource } from "@/lib/lead-source";
+import type { HomeContent } from "@/server/content";
 import { EASE } from "@/utils/motion";
-import {
-  STEP_FIELDS,
-  enquirySchema,
-  initialSubmitState,
-  type EnquiryInput,
-} from "@/utils/validation";
 
-const EMPTY: EnquiryInput = {
-  first_name: "",
-  last_name: "",
-  email: "",
-  mobile: "",
-  service: "" as EnquiryInput["service"],
-  message: "",
+type Props = {
+  contact: HomeContent["contact"];
+  /** Which block this form instance belongs to, stored on the lead. */
+  source?: string;
 };
 
-const TOTAL = formSteps.length;
-const ALL_FIELDS = Object.keys(EMPTY) as (keyof EnquiryInput)[];
+const initialState: LeadSubmitResult = { ok: false, message: "" };
 
-export function ContactForm() {
+/** UTM keys worth keeping. Anything else on the URL is noise. */
+const UTM_KEYS = [
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_term",
+  "utm_content",
+];
+
+export function ContactForm({ contact, source = DIRECT_SOURCE }: Props) {
+  const steps = contact.steps;
+  const total = steps.length;
+
   const [step, setStep] = useState(0);
-  const [values, setValues] = useState<EnquiryInput>(EMPTY);
+  const [values, setValues] = useState<Record<string, string>>({});
   const [clientErrors, setClientErrors] = useState<Record<string, string>>({});
   const reduced = useReducedMotion();
 
-  const [state, formAction, pending] = useActionState(
-    submitEnquiry,
-    initialSubmitState,
+  const [state, formAction, pending] = useActionState(submitEnquiry, initialState);
+
+  /**
+   * Attribution comes off the URL, which is the only place it exists. Read at
+   * submit time rather than copied into state on mount: hidden inputs that
+   * only exist after hydration are a mismatch, and reading late also catches
+   * a URL that changed through client-side navigation.
+   */
+  function withUtm(formData: FormData) {
+    const params = new URLSearchParams(window.location.search);
+    for (const key of UTM_KEYS) {
+      const value = params.get(key);
+      if (value) formData.set(key, value.slice(0, 200));
+    }
+    // Which CTA sent them here, falling back to the form's own name when
+    // they scrolled to it directly.
+    formData.set("source", readLeadSource(source));
+    formAction(formData);
+  }
+
+  const currentFields = useMemo(
+    () => steps[step]?.fields ?? [],
+    [steps, step],
   );
 
   // Server errors are the base layer; a client entry (including an empty
@@ -45,44 +69,43 @@ export function ContactForm() {
     ...clientErrors,
   };
 
-  const set =
-    (field: keyof EnquiryInput) =>
-    (
-      event: React.ChangeEvent<
-        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >,
-    ) => {
-      setValues((v) => ({ ...v, [field]: event.target.value }));
-      setClientErrors((e) => ({ ...e, [field]: "" }));
-    };
+  function set(name: string, value: string) {
+    setValues((v) => ({ ...v, [name]: value }));
+    setClientErrors((e) => ({ ...e, [name]: "" }));
+  }
 
-  /** Validate only the fields on the current step, so Next can gate progress. */
+  /** Validate only this step's fields, so Next can gate progress. */
   function validateStep(index: number) {
-    const fields = STEP_FIELDS[index];
-    const result = enquirySchema.safeParse(values);
+    const fields = steps[index]?.fields ?? [];
+    const result = leadSubmissionSchema.safeParse({ ...values, source });
     if (result.success) return true;
 
-    // Start from what the client already knows, then clear and re-evaluate
-    // just this step's fields, so a server error on an untouched field is not
-    // silently dropped.
+    const names = fields.map((f) => f.name);
     const next: Record<string, string> = { ...clientErrors };
-    for (const field of fields) next[field] = "";
+    for (const name of names) next[name] = "";
 
     let failed = 0;
+
+    // An empty required field is reported against the label the visitor can
+    // actually see. The schema names the Lead column it writes to, which is
+    // not what the form calls it: "goal" is labelled "Service" on the page.
+    for (const field of fields) {
+      if (field.required && !(values[field.name] ?? "").trim()) {
+        next[field.name] = `${field.label} is required.`;
+        failed += 1;
+      }
+    }
+
     for (const issue of result.error.issues) {
       const key = String(issue.path[0] ?? "");
-      if ((fields as readonly string[]).includes(key) && !next[key]) {
+      if (names.includes(key) && !next[key]) {
         next[key] = issue.message;
         failed += 1;
       }
     }
+
     setClientErrors(next);
     return failed === 0;
-  }
-
-  function handleNext() {
-    if (!validateStep(step)) return;
-    setStep((s) => Math.min(s + 1, TOTAL - 1));
   }
 
   if (state.ok) {
@@ -95,38 +118,51 @@ export function ContactForm() {
           <Check size={24} />
         </span>
         <h3 className="mt-6 font-display text-xl font-bold text-white">
-          Thanks, that&apos;s everything we need.
+          {contact.successTitle}
         </h3>
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-400">
-          A real person will reply within 24 hours. No autoresponder, no pitch
-          deck.
+          {contact.successMessage}
         </p>
       </div>
     );
   }
 
-  const isLast = step === TOTAL - 1;
-  const currentFields = STEP_FIELDS[step] as readonly string[];
+  const isLast = step === total - 1;
+  const currentNames = currentFields.map((f) => f.name);
   // Values from other steps still have to reach the server action.
-  const hiddenFields = ALL_FIELDS.filter((f) => !currentFields.includes(f));
+  const hidden = Object.entries(values).filter(([name]) => !currentNames.includes(name));
 
   return (
     <form
-      action={formAction}
+      action={withUtm}
+      // Pressing Enter in any field implicitly submits the form, which on an
+      // intermediate step would post a half-filled enquiry. Only the last
+      // step is allowed to submit.
+      onSubmit={(event) => {
+        if (!isLast) event.preventDefault();
+      }}
       noValidate
       data-testid="contact-form"
       className="glass-strong rounded-3xl p-6 sm:p-8"
     >
-      {hiddenFields.map((field) => (
-        <input key={field} type="hidden" name={field} value={values[field] ?? ""} />
+      <input type="hidden" name="source" value={source} />
+      {hidden.map(([name, value]) => (
+        <input key={name} type="hidden" name={name} value={value} />
       ))}
+
+      {/* Honeypot. Hidden from sight and from assistive tech, so only a bot
+          that fills every input it finds will populate it. */}
+      <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+        <label htmlFor="company_website">Company website</label>
+        <input id="company_website" name="company_website" type="text" tabIndex={-1} autoComplete="off" />
+      </div>
 
       <div className="flex items-center justify-between">
         <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-slate-400">
-          Step {step + 1} of {TOTAL}
+          Step {step + 1} of {total}
         </span>
         <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-cyan-300">
-          {Math.round(((step + 1) / TOTAL) * 100)}%
+          {Math.round(((step + 1) / total) * 100)}%
         </span>
       </div>
 
@@ -134,19 +170,19 @@ export function ContactForm() {
         className="mt-3 h-1 w-full overflow-hidden rounded-full bg-white/8"
         role="progressbar"
         aria-valuemin={1}
-        aria-valuemax={TOTAL}
+        aria-valuemax={total}
         aria-valuenow={step + 1}
         aria-label="Form progress"
       >
         <motion.div
-          animate={{ width: `${((step + 1) / TOTAL) * 100}%` }}
+          animate={{ width: `${((step + 1) / total) * 100}%` }}
           transition={{ duration: reduced ? 0 : 0.5, ease: EASE }}
           className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-violet-500"
         />
       </div>
 
       <h3 className="mt-7 font-display text-lg font-bold tracking-tight text-white sm:text-xl">
-        {formSteps[step]}
+        {steps[step]?.question}
       </h3>
 
       <div className="relative mt-6 min-h-[150px]">
@@ -157,97 +193,61 @@ export function ContactForm() {
             animate={{ opacity: 1, x: 0 }}
             exit={reduced ? undefined : { opacity: 0, x: -24 }}
             transition={{ duration: reduced ? 0 : 0.35, ease: EASE }}
-            className="flex flex-col gap-4"
+            className={
+              currentFields.length > 1 ? "grid gap-4 sm:grid-cols-2" : "flex flex-col gap-4"
+            }
           >
-            {step === 0 ? (
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="First name" error={errors.first_name}>
-                  <input
-                    className="input-glass"
-                    name="first_name"
-                    autoComplete="given-name"
-                    placeholder="First name"
-                    value={values.first_name}
-                    onChange={set("first_name")}
-                    aria-invalid={Boolean(errors.first_name)}
+            {currentFields.map((field) => (
+              <Field
+                key={field.name}
+                id={`lead-${field.name}`}
+                label={field.label}
+                error={errors[field.name]}
+              >
+                {field.type === "textarea" ? (
+                  <textarea
+                    id={`lead-${field.name}`}
+                    className="input-glass resize-none"
+                    name={field.name}
+                    rows={5}
+                    value={values[field.name] ?? ""}
+                    onChange={(e) => set(field.name, e.target.value)}
+                    aria-invalid={Boolean(errors[field.name])}
                   />
-                </Field>
-                <Field label="Last name" error={errors.last_name}>
-                  <input
+                ) : field.type === "select" ? (
+                  <select
+                    id={`lead-${field.name}`}
                     className="input-glass"
-                    name="last_name"
-                    autoComplete="family-name"
-                    placeholder="Last name"
-                    value={values.last_name}
-                    onChange={set("last_name")}
-                    aria-invalid={Boolean(errors.last_name)}
-                  />
-                </Field>
-              </div>
-            ) : null}
-
-            {step === 1 ? (
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="Email" error={errors.email}>
+                    name={field.name}
+                    value={values[field.name] ?? ""}
+                    onChange={(e) => set(field.name, e.target.value)}
+                    aria-invalid={Boolean(errors[field.name])}
+                  >
+                    <option value="">Select an option...</option>
+                    {(field.options ?? []).map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
                   <input
+                    id={`lead-${field.name}`}
                     className="input-glass"
-                    name="email"
-                    type="email"
-                    inputMode="email"
-                    autoComplete="email"
-                    placeholder="you@company.com"
-                    value={values.email}
-                    onChange={set("email")}
-                    aria-invalid={Boolean(errors.email)}
+                    name={field.name}
+                    type={field.type}
+                    inputMode={
+                      field.type === "email" ? "email" : field.type === "tel" ? "tel" : undefined
+                    }
+                    autoComplete={AUTOCOMPLETE[field.name] ?? "on"}
+                    placeholder={field.label}
+                    value={values[field.name] ?? ""}
+                    onChange={(e) => set(field.name, e.target.value)}
+                    aria-invalid={Boolean(errors[field.name])}
                   />
-                </Field>
-                <Field label="Mobile" error={errors.mobile}>
-                  <input
-                    className="input-glass"
-                    name="mobile"
-                    type="tel"
-                    inputMode="tel"
-                    autoComplete="tel"
-                    placeholder="+91 00000 00000"
-                    value={values.mobile}
-                    onChange={set("mobile")}
-                    aria-invalid={Boolean(errors.mobile)}
-                  />
-                </Field>
-              </div>
-            ) : null}
-
-            {step === 2 ? (
-              <Field label="Service" error={errors.service}>
-                <select
-                  className="input-glass"
-                  name="service"
-                  value={values.service}
-                  onChange={set("service")}
-                  aria-invalid={Boolean(errors.service)}
-                >
-                  <option value="">Select a service...</option>
-                  {serviceOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
+                )}
               </Field>
-            ) : null}
-
-            {step === 3 ? (
-              <Field label="Message (optional)" error={errors.message}>
-                <textarea
-                  className="input-glass resize-none"
-                  name="message"
-                  rows={5}
-                  placeholder="Budget, timeline, what you have tried so far"
-                  value={values.message}
-                  onChange={set("message")}
-                />
-              </Field>
-            ) : null}
+            ))}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -269,12 +269,31 @@ export function ContactForm() {
           </CtaButton>
         ) : null}
 
+        {/* The keys matter. Without them React sees the same component in
+            the same slot and reuses the <button> node, flipping its `type`
+            from "button" to "submit" during the very click that advanced the
+            step. The browser then submits the form on that same click, which
+            posted the enquiry a step early. Distinct keys force a new node. */}
         {isLast ? (
-          <CtaButton type="submit" size="md" disabled={pending} data-testid="form-submit">
+          <CtaButton
+            key="form-submit"
+            type="submit"
+            size="md"
+            disabled={pending}
+            data-testid="form-submit"
+          >
             {pending ? "Sending..." : "Send enquiry"} <Send size={14} />
           </CtaButton>
         ) : (
-          <CtaButton type="button" size="md" onClick={handleNext} data-testid="form-next">
+          <CtaButton
+            key="form-next"
+            type="button"
+            size="md"
+            onClick={() => {
+              if (validateStep(step)) setStep((s) => Math.min(s + 1, total - 1));
+            }}
+            data-testid="form-next"
+          >
             Next <ArrowRight size={14} />
           </CtaButton>
         )}
@@ -283,24 +302,38 @@ export function ContactForm() {
   );
 }
 
+/** Browser autofill hints, by Lead column name. */
+const AUTOCOMPLETE: Record<string, string> = {
+  firstName: "given-name",
+  lastName: "family-name",
+  email: "email",
+  phone: "tel",
+  company: "organization",
+};
+
 function Field({
+  id,
   label,
   error,
   children,
 }: {
+  id: string;
   label: string;
   error?: string;
   children: React.ReactNode;
 }) {
   return (
-    <label className="block">
-      <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400">
+    <div className="block">
+      <label
+        htmlFor={id}
+        className="mb-2 block font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400"
+      >
         {label}
-      </span>
+      </label>
       {children}
       <span aria-live="polite" className="mt-1.5 block min-h-4 text-xs text-rose-300">
         {error}
       </span>
-    </label>
+    </div>
   );
 }

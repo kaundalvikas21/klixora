@@ -1,15 +1,31 @@
 import type { Metadata } from "next";
 import { SubPage } from "@/components/sections/sub/page-template";
+import { JsonLd } from "@/components/ui/json-ld";
 import { agriContent } from "@/content/pages";
-import { site } from "@/content/site";
+import { metadataFor } from "@/server/metadata";
+import {
+  getSeoMeta,
+  getSiteSettings,
+  getSocialLinks,
+  getWorkingHours,
+} from "@/server/content";
 
-export const metadata: Metadata = {
-  title: "Agri Marketing",
-  description:
-    "Klixora helps agri brands connect with rural audiences through digital, offline-first, and insight-led communication.",
-  alternates: { canonical: `${site.url}/agri-marketing` },
-};
+export function generateMetadata(): Promise<Metadata> {
+  return metadataFor("agri-marketing");
+}
 
-export default function AgriMarketingPage() {
-  return <SubPage content={agriContent} />;
+export default async function AgriMarketingPage() {
+  const [seo, settings, hours, socials] = await Promise.all([
+    getSeoMeta("agri-marketing"),
+    getSiteSettings(),
+    getWorkingHours(),
+    getSocialLinks(),
+  ]);
+
+  return (
+    <>
+      <JsonLd seo={seo} settings={settings} hours={hours} socials={socials} />
+      <SubPage content={agriContent} />
+    </>
+  );
 }

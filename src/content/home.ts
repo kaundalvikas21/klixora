@@ -1,66 +1,8 @@
-import {
-  ClipboardCheck,
-  Mail,
-  Search,
-  ShoppingBag,
-  Users,
-  Zap,
-  type LucideIcon,
-} from "lucide-react";
-
-export type Service = {
-  id: string;
-  title: string;
-  tag: string;
-  desc: string;
-  icon: LucideIcon;
-};
-
-export const services: Service[] = [
-  {
-    id: "audit-strategy",
-    title: "Website Audit & Strategy",
-    tag: "Diagnostic & Blueprint",
-    desc: "We analyze your website to identify gaps, improve performance, and create a growth-focused strategy that attracts more visitors and converts them into customers.",
-    icon: ClipboardCheck,
-  },
-  {
-    id: "smm",
-    title: "Social Media Marketing",
-    tag: "Organic & Kinetic",
-    desc: "Engaging content and campaigns that increase brand awareness, build audience trust, and drive meaningful customer engagement.",
-    icon: Users,
-  },
-  {
-    id: "seo",
-    title: "SEO Optimization",
-    tag: "Intent & Scale",
-    desc: "Improve your Google rankings and attract organic traffic through keyword optimization, technical SEO, and content strategies that deliver long-term results.",
-    icon: Search,
-  },
-  {
-    id: "paid-ads",
-    title: "Paid Ads (Meta & Google)",
-    tag: "Performance Media",
-    desc: "Reach the right audience with targeted Meta and Google Ads campaigns designed to generate quality leads, increase sales, and maximize ROI.",
-    icon: Zap,
-  },
-  {
-    id: "email-whatsapp",
-    title: "Email & WhatsApp Marketing",
-    tag: "Retention & LTV",
-    desc: "Stay connected with your customers through personalized email and WhatsApp campaigns that nurture leads and boost repeat business.",
-    icon: Mail,
-  },
-  {
-    id: "ecommerce-marketplace",
-    title: "E-Commerce & Marketplace Listing",
-    tag: "Storefront Acceleration",
-    desc: "Optimize your product listings on Amazon, Flipkart, and other marketplaces to increase visibility, attract buyers, and drive more sales.",
-    icon: ShoppingBag,
-  },
-];
-
+/**
+ * Copy for the home page sections that are NOT in the admin's scope:
+ * Results, Why Us, Process and Testimonials. The Hero, Core Services and
+ * Contact sections read from the database instead, see server/content.ts.
+ */
 export const stats = [
   { id: "industries", value: 7, suffix: "+", label: "Industries Served" },
   { id: "businesses", value: 30, suffix: "+", label: "Businesses Scaled" },
@@ -178,17 +120,4 @@ export const testimonials = [
     from: "#12B886",
     to: "#7CC22E",
   },
-] as const;
-
-export const contactPromises = [
-  "A reply within 24 hours, from a person, not an autoresponder",
-  "A straight answer on whether we are the right fit",
-  "No pitch deck and no discovery theatre",
-] as const;
-
-export const formSteps = [
-  "First, who are we talking to?",
-  "How can we reach you?",
-  "What are you interested in?",
-  "Anything we should know?",
 ] as const;

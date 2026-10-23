@@ -1,7 +1,6 @@
 "use client";
 
 import { Component, type ReactNode } from "react";
-import { site } from "@/content/site";
 
 /**
  * Catches render errors inside the multi-step form so a fault there degrades
@@ -14,7 +13,8 @@ import { site } from "@/content/site";
  * module in dev it throws "Cannot redefine property: catchError". The React
  * primitive has no such problem and is what error.tsx uses underneath.
  */
-type Props = { children: ReactNode };
+/** `email` comes from Site Settings, so the fallback never hardcodes it. */
+type Props = { children: ReactNode; email: string };
 type State = { hasError: boolean };
 
 export class ContactFormBoundary extends Component<Props, State> {
@@ -43,8 +43,11 @@ export class ContactFormBoundary extends Component<Props, State> {
         </h3>
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-400">
           Reload it below, or email{" "}
-          <a href={`mailto:${site.email}`} className="text-cyan-300 hover:underline">
-            {site.email}
+          <a
+            href={`mailto:${this.props.email}`}
+            className="text-cyan-300 hover:underline"
+          >
+            {this.props.email}
           </a>{" "}
           and we will pick it up from there.
         </p>

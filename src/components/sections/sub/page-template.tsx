@@ -3,6 +3,7 @@ import { AlertTriangle, Check } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 import { TiltCard } from "@/components/motion/tilt-card";
 import { Cta } from "@/components/ui/cta";
+import { CardIndex } from "@/components/ui/card-index";
 import { Container, Section } from "@/components/ui/section";
 import { staggerDelay } from "@/utils/motion";
 import type { PageContent, SplitHeading } from "@/content/pages";
@@ -176,9 +177,7 @@ export function SubPage({ content }: { content: PageContent }) {
               data-testid={`page-service-${i + 1}`}
               className="p-6 transition-colors duration-500 hover:border-violet-400/35 sm:p-7"
             >
-              <span className="font-mono text-[11px] tracking-[0.24em] text-cyan-300">
-                {String(i + 1).padStart(2, "0")}
-              </span>
+              <CardIndex index={i} />
               <h3 className="mt-4 font-display text-lg font-bold tracking-tight text-white">
                 {service.title}
               </h3>
@@ -244,11 +243,18 @@ export function SubPage({ content }: { content: PageContent }) {
                     height={667}
                     className="h-48 w-full object-cover transition-transform duration-700 group-hover:scale-105 sm:h-56"
                   />
+                  {/* The illustrations are bright, so the scrim has to carry
+                      real weight at the bottom rather than fading to nothing
+                      behind the label. */}
                   <div
                     aria-hidden="true"
-                    className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent"
+                    className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-transparent"
                   />
-                  <figcaption className="glass absolute bottom-4 left-4 rounded-full px-4 py-2 font-display text-xs font-bold text-white">
+                  {/* Solid ink, not `.glass`: a translucent pill picks up
+                      whatever is behind it, and over a white illustration
+                      that left white text on a near-white chip. At 92% this
+                      clears 4.5:1 against white on every card. */}
+                  <figcaption className="absolute inset-x-4 bottom-4 w-fit max-w-[calc(100%-2rem)] truncate rounded-full border border-white/15 bg-ink/92 px-4 py-2 font-display text-xs font-bold text-white shadow-lg shadow-black/50 backdrop-blur-sm">
                     {item.label}
                   </figcaption>
                 </figure>
@@ -321,7 +327,7 @@ export function SubPage({ content }: { content: PageContent }) {
       </Section>
 
       {/* -------------------------------------------------------- cta band */}
-      <Section id="contact" testId="page-cta" className="pb-20 pt-0 md:pt-0 lg:pt-0">
+      <Section id="contact" testId="page-cta">
         <Reveal y={32}>
           <div className="glass relative overflow-hidden rounded-3xl px-6 py-12 text-center sm:px-8 sm:py-14 lg:py-16">
             <div

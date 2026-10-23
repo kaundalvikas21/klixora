@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { gotoReady } from "./ready";
 
 const ROUTES = ["/", "/agri-marketing", "/event-management"] as const;
 const VIEWPORTS = [
@@ -28,7 +29,7 @@ test.describe("responsive layout", () => {
         page,
       }) => {
         await page.setViewportSize({ width: vp.width, height: vp.height });
-        await page.goto(route);
+        await gotoReady(page, route);
 
         // html carries overflow-x:clip, so scrollWidth can never report
         // overflow. Content that bleeds is simply cut off and invisible, so
@@ -79,7 +80,7 @@ test.describe("responsive layout", () => {
     page,
   }) => {
     await page.setViewportSize({ width: 768, height: 1024 });
-    await page.goto("/");
+    await gotoReady(page, "/");
 
     const services = await columnCount(
       page,
@@ -93,7 +94,7 @@ test.describe("responsive layout", () => {
 
   test("desktop restores the full grids", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("/");
+    await gotoReady(page, "/");
 
     expect(
       await columnCount(page, '[data-testid="services-section"] .grid'),
@@ -105,9 +106,9 @@ test.describe("responsive layout", () => {
     page,
   }) => {
     await page.setViewportSize({ width: 375, height: 760 });
-    await page.goto("/");
+    await gotoReady(page, "/");
 
-    const cta = page.getByTestId("hero-cta-enquire");
+    const cta = page.getByTestId("hero-cta-primary");
     const ctaBox = await cta.boundingBox();
     const containerWidth = await page.evaluate(() => {
       const el = document.querySelector('[data-testid="hero-section"] .max-w-7xl');
@@ -132,7 +133,7 @@ test.describe("responsive layout", () => {
 test.describe("nav active state", () => {
   test("marks the section in view as active", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("/");
+    await gotoReady(page, "/");
 
     const services = page.getByTestId("nav-link-services");
     await expect(services).not.toHaveAttribute("data-active", "true");
@@ -152,7 +153,7 @@ test.describe("nav active state", () => {
 
   test("marks the current route as active on a vertical page", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("/agri-marketing");
+    await gotoReady(page, "/agri-marketing");
     await expect(page.getByTestId("nav-link-agri-marketing")).toHaveAttribute(
       "data-active",
       "true",
@@ -163,7 +164,7 @@ test.describe("nav active state", () => {
 test.describe("mobile off-canvas", () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 760 });
-    await page.goto("/");
+    await gotoReady(page, "/");
     await page.getByTestId("menu-toggle").click();
     await expect(page.getByTestId("mobile-menu")).toBeVisible();
   });
@@ -197,7 +198,7 @@ test.describe("mobile off-canvas", () => {
 
 test.describe("footer", () => {
   test("renders every column and the legal row", async ({ page }) => {
-    await page.goto("/");
+    await gotoReady(page, "/");
     const footer = page.getByTestId("site-footer");
 
     for (const heading of ["Services", "Company", "Get in touch"]) {
@@ -213,7 +214,7 @@ test.describe("footer", () => {
   }) => {
     // Narrowest realistic phone first; two columns must still fit.
     await page.setViewportSize({ width: 320, height: 568 });
-    await page.goto("/");
+    await gotoReady(page, "/");
     expect(await columnCount(page, '[data-testid="site-footer"] .grid')).toBe(2);
 
     await page.setViewportSize({ width: 1440, height: 900 });
@@ -224,7 +225,7 @@ test.describe("footer", () => {
     page,
   }) => {
     await page.setViewportSize({ width: 320, height: 568 });
-    await page.goto("/");
+    await gotoReady(page, "/");
 
     const tight = await page.evaluate(() => {
       const footer = document.querySelector('[data-testid="site-footer"]')!;
@@ -238,7 +239,7 @@ test.describe("footer", () => {
   for (const vp of VIEWPORTS) {
     test(`footer has no contrast violations at ${vp.width}px`, async ({ page }) => {
       await page.setViewportSize({ width: vp.width, height: vp.height });
-      await page.goto("/");
+      await gotoReady(page, "/");
 
       const results = await new AxeBuilder({ page })
         .include('[data-testid="site-footer"]')
@@ -256,7 +257,7 @@ test.describe("footer", () => {
 test.describe("site logo", () => {
   for (const from of ["/agri-marketing", "/event-management"] as const) {
     test(`returns to the home hero from ${from}`, async ({ page }) => {
-      await page.goto(from);
+      await gotoReady(page, from);
 
       // Both heroes carry id="top", so a bare "#top" used to stay on the
       // current page instead of going home.
@@ -270,7 +271,7 @@ test.describe("site logo", () => {
 
 test("the process column actually pins while scrolling", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/");
+  await gotoReady(page, "/");
 
   const delta = await page.evaluate(async () => {
     const sticky = document.querySelector(

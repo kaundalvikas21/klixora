@@ -1,0 +1,36 @@
+# Netlify, for the staging deploy.
+#
+# Nothing here selects a Next.js plugin on purpose. Netlify detects Next and
+# applies its OpenNext adapter itself, and their docs are explicit that you
+# should not pin it: an unpinned adapter is updated on every build, which is
+# what keeps a Next 16 app working as both move. Adding `[[plugins]]` here
+# would opt out of that.
+#
+# What this file does set is the two things detection cannot guess.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  # Next 16 needs 20.9+. Pinned rather than left to the image default, so a
+  # change to Netlify's default does not change what this builds on.
+  NODE_VERSION = "22"
+
+# Staging is a copy of the live site, and a copy that search engines can index
+# is a duplicate-content problem and a way for a client to land on the wrong
+# URL. The app's own robots.ts only excludes /admin and /api, because it is
+# written for production.
+[context.deploy-preview]
+  [context.deploy-preview.environment]
+    NEXT_PUBLIC_ROBOTS = "noindex"
+
+[context.branch-deploy]
+  [context.branch-deploy.environment]
+    NEXT_PUBLIC_ROBOTS = "noindex"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

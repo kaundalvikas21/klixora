@@ -1,15 +1,31 @@
 import type { Metadata } from "next";
 import { SubPage } from "@/components/sections/sub/page-template";
+import { JsonLd } from "@/components/ui/json-ld";
 import { eventsContent } from "@/content/pages";
-import { site } from "@/content/site";
+import { metadataFor } from "@/server/metadata";
+import {
+  getSeoMeta,
+  getSiteSettings,
+  getSocialLinks,
+  getWorkingHours,
+} from "@/server/content";
 
-export const metadata: Metadata = {
-  title: "Event Management",
-  description:
-    "From concept to execution, Klixora delivers end-to-end event management solutions for brands.",
-  alternates: { canonical: `${site.url}/event-management` },
-};
+export function generateMetadata(): Promise<Metadata> {
+  return metadataFor("event-management");
+}
 
-export default function EventManagementPage() {
-  return <SubPage content={eventsContent} />;
+export default async function EventManagementPage() {
+  const [seo, settings, hours, socials] = await Promise.all([
+    getSeoMeta("event-management"),
+    getSiteSettings(),
+    getWorkingHours(),
+    getSocialLinks(),
+  ]);
+
+  return (
+    <>
+      <JsonLd seo={seo} settings={settings} hours={hours} socials={socials} />
+      <SubPage content={eventsContent} />
+    </>
+  );
 }

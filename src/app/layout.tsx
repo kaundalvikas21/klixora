@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { JetBrains_Mono, Plus_Jakarta_Sans, Syne } from "next/font/google";
 import { site } from "@/content/site";
+import { getSeoDefaults, getSiteSettings } from "@/server/content";
 import "./globals.css";
 
 const syne = Syne({
@@ -25,27 +26,28 @@ const jetbrains = JetBrains_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
-  title: {
-    default: site.title,
-    template: `%s | ${site.name}`,
-  },
-  description: site.description,
-  openGraph: {
-    type: "website",
-    siteName: site.name,
-    title: site.title,
-    description: site.description,
-    url: site.url,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: site.title,
-    description: site.description,
-  },
-  icons: { icon: "/favicon.svg" },
-};
+/**
+ * Only the document-wide parts live here: the base URL and the title
+ * template from SeoDefaults. Each route supplies its own title and
+ * description through server/metadata.ts.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const [defaults, settings] = await Promise.all([
+    getSeoDefaults(),
+    getSiteSettings(),
+  ]);
+
+  return {
+    metadataBase: new URL(site.url),
+    title: {
+      default: settings.brandName,
+      // SeoDefaults stores "%s | Klixora"; Next wants the same placeholder.
+      template: defaults.titleTemplate,
+    },
+    description: settings.tagline,
+    icons: { icon: "/favicon.svg" },
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#07090E",
