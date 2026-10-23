@@ -290,6 +290,14 @@
 
 /* Respect the user's motion preference across every ported animation. */
 @media (prefers-reduced-motion: reduce) {
+  /* Entrance animations start at opacity 0 in server-rendered markup. Without
+     this, reduced-motion visitors see nothing until hydration finishes and the
+     JS guard runs. */
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
   *,
   *::before,
   *::after {

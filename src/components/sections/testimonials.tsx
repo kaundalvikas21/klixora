@@ -117,7 +117,7 @@ export function Testimonials() {
                   <span className="block font-display text-sm font-bold text-white">
                     {item.name}
                   </span>
-                  <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">
+                  <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400">
                     {item.role}
                   </span>
                 </span>

@@ -30,11 +30,16 @@ export function Reveal({
 
   if (reduced) {
     const Static = as;
-    return <Static className={className}>{children}</Static>;
+    return (
+      <Static data-reveal className={className}>
+        {children}
+      </Static>
+    );
   }
 
   return (
     <Comp
+      data-reveal
       className={className}
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}

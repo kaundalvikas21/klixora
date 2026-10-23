@@ -222,7 +222,7 @@ export function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute bottom-7 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 sm:flex"
       >
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-slate-500">
+        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-slate-400">
           Scroll to explore
         </span>
         <div className="h-9 w-px overflow-hidden bg-white/10">

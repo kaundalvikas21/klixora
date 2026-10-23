@@ -77,7 +77,7 @@ export function Process() {
                     <h3 className="font-display text-xl font-bold tracking-tight text-white">
                       {item.title}
                     </h3>
-                    <span className="font-mono text-[11px] tracking-[0.24em] text-slate-500">
+                    <span className="font-mono text-[11px] tracking-[0.24em] text-slate-400">
                       {item.step}
                     </span>
                   </div>

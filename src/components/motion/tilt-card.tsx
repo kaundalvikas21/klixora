@@ -58,6 +58,7 @@ export function TiltCard({
 
   return (
     <motion.div
+      data-reveal
       {...rest}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}

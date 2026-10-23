@@ -61,7 +61,7 @@ export function Services() {
                 <span className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-cyan-300">
                   <Icon size={20} aria-hidden="true" />
                 </span>
-                <span className="font-mono text-[11px] tracking-[0.2em] text-slate-600">
+                <span className="font-mono text-[11px] tracking-[0.2em] text-slate-400">
                   /{String(i + 1).padStart(2, "0")}
                 </span>
               </div>

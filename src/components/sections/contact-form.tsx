@@ -4,11 +4,16 @@ import { useActionState, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowLeft, ArrowRight, Check, Send } from "lucide-react";
 import { CtaButton } from "@/components/ui/cta";
-import { initialSubmitState, submitEnquiry } from "@/services/leads";
+import { submitEnquiry } from "@/services/leads";
 import { formSteps } from "@/content/home";
 import { serviceOptions } from "@/content/site";
 import { EASE } from "@/utils/motion";
-import { STEP_FIELDS, enquirySchema, type EnquiryInput } from "@/utils/validation";
+import {
+  STEP_FIELDS,
+  enquirySchema,
+  initialSubmitState,
+  type EnquiryInput,
+} from "@/utils/validation";
 
 const EMPTY: EnquiryInput = {
   first_name: "",

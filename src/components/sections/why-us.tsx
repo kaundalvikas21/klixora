@@ -55,7 +55,7 @@ export function WhyUs() {
               card.span,
             )}
           >
-            <span className="font-mono text-[11px] tracking-[0.24em] text-slate-600">
+            <span className="font-mono text-[11px] tracking-[0.24em] text-slate-400">
               {String(i + 1).padStart(2, "0")}
             </span>
             <h3 className="mt-4 font-display text-lg font-bold tracking-tight text-white">

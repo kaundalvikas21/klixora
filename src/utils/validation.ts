@@ -33,3 +33,17 @@ export const STEP_FIELDS = [
   ["service"],
   ["message"],
 ] as const satisfies ReadonlyArray<ReadonlyArray<keyof EnquiryInput>>;
+
+/**
+ * Shape returned by the enquiry action. Declared here rather than in
+ * services/leads.ts because a "use server" module may only export async
+ * functions, and exporting this object from there crashes the module at
+ * runtime with "can only export async functions, found object".
+ */
+export type SubmitResult = {
+  ok: boolean;
+  message: string;
+  fieldErrors?: Record<string, string>;
+};
+
+export const initialSubmitState: SubmitResult = { ok: false, message: "" };

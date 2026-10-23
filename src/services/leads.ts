@@ -1,15 +1,7 @@
 "use server";
 
-import { enquirySchema } from "@/utils/validation";
+import { enquirySchema, type SubmitResult } from "@/utils/validation";
 import { getSupabaseClient } from "@/services/supabase";
-
-export type SubmitResult = {
-  ok: boolean;
-  message: string;
-  fieldErrors?: Record<string, string>;
-};
-
-export const initialSubmitState: SubmitResult = { ok: false, message: "" };
 
 /**
  * Trust boundary: client-side step validation is UX only. Everything is

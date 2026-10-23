@@ -41,7 +41,7 @@ export default function Error({
         Try again
       </button>
       {digest ? (
-        <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">
+        <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400">
           Reference {digest}
         </p>
       ) : null}
