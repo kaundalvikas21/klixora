@@ -14,8 +14,8 @@ export function SiteFooter() {
             <Image
               src={site.logo}
               alt={site.name}
-              width={148}
-              height={36}
+              width={428}
+              height={113}
               className="h-8 w-auto"
             />
             <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.28em] text-slate-400">

@@ -104,8 +104,8 @@ export function SubPage({ content }: { content: PageContent }) {
                   <Image
                     src={content.heroImg}
                     alt={content.heroAlt}
-                    width={900}
-                    height={620}
+                    width={1024}
+                    height={683}
                     priority
                     className="w-full rounded-3xl border border-white/10 object-cover"
                   />
@@ -233,8 +233,8 @@ export function SubPage({ content }: { content: PageContent }) {
                       <Image
                         src={item.src}
                         alt={item.label}
-                        width={640}
-                        height={480}
+                        width={1000}
+                        height={667}
                         className="h-56 w-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                       <div
