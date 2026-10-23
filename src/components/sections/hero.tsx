@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import {
   motion,
   useMotionValue,
@@ -12,6 +11,8 @@ import {
 } from "motion/react";
 import type { PointerEvent } from "react";
 import { ArrowUpRight, PhoneCall } from "lucide-react";
+import { Cta } from "@/components/ui/cta";
+import { Container } from "@/components/ui/section";
 import { EASE } from "@/utils/motion";
 
 const TITLE_LINES = [
@@ -45,7 +46,7 @@ export function Hero() {
       id="top"
       onPointerMove={handlePointerMove}
       data-testid="hero-section"
-      className="relative flex min-h-screen flex-col justify-center overflow-hidden pb-20 pt-32 lg:pb-14"
+      className="relative flex min-h-screen flex-col justify-center overflow-hidden pb-16 pt-28 md:pt-32 lg:pb-14"
     >
       <motion.div
         aria-hidden="true"
@@ -85,7 +86,7 @@ export function Hero() {
         className="absolute -right-32 top-1/3 -z-10 h-[420px] w-[420px] rounded-full bg-cyan-500/15 blur-[140px]"
       />
 
-      <div className="mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12">
+      <Container>
         <div className="grid items-center gap-14 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-7">
             <motion.p
@@ -111,7 +112,12 @@ export function Hero() {
                   className="block"
                 >
                   {line.map((seg, i) => (
-                    <span key={i} className={"gradient" in seg ? "text-gradient" : undefined}>
+                    <span
+                      key={i}
+                      className={
+                        "gradient" in seg ? "text-gradient" : undefined
+                      }
+                    >
                       {seg.t}
                     </span>
                   ))}
@@ -134,24 +140,20 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.65, ease: EASE }}
-              className="mt-9 flex flex-wrap items-center gap-4"
+              className="mt-9 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4"
             >
-              <Link
-                href="#contact"
-                data-testid="hero-cta-enquire"
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-8 py-4 font-display text-sm font-bold uppercase tracking-wider text-ink transition-all duration-300 hover:scale-[1.03] hover:shadow-glow-cyan"
-              >
+              <Cta href="#contact" data-testid="hero-cta-enquire">
                 Enquire Now <ArrowUpRight size={16} />
-              </Link>
+              </Cta>
               {/* Outlined twin of the primary — same pill, same weight, so the
                   two CTAs read as a pair rather than a button and a link. */}
-              <Link
+              <Cta
                 href="#contact"
+                variant="secondary"
                 data-testid="hero-cta-call"
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 px-8 py-4 font-display text-sm font-bold uppercase tracking-wider text-slate-200 transition-all duration-300 hover:border-cyan-300/60 hover:text-white hover:shadow-glow-cyan"
               >
                 <PhoneCall size={14} /> Get on a Call Today
-              </Link>
+              </Cta>
             </motion.div>
           </div>
 
@@ -175,7 +177,10 @@ export function Hero() {
                 </span>
               </div>
 
-              <div className="mt-7 flex h-40 items-end gap-2.5" aria-hidden="true">
+              <div
+                className="mt-7 flex h-40 items-end gap-2.5"
+                aria-hidden="true"
+              >
                 {BARS.map((h, i) => (
                   <motion.div
                     key={i}
@@ -211,7 +216,7 @@ export function Hero() {
             </div>
           </motion.div>
         </div>
-      </div>
+      </Container>
 
       <motion.div
         initial={{ opacity: 0 }}

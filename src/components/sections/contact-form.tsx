@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useActionState, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowLeft, ArrowRight, Check, Send } from "lucide-react";
-import { submitEnquiry } from "@/services/leads";
+import { CtaButton } from "@/components/ui/cta";
+import { initialSubmitState, submitEnquiry } from "@/services/leads";
 import { formSteps } from "@/content/home";
 import { serviceOptions } from "@/content/site";
 import { EASE } from "@/utils/motion";
@@ -19,22 +20,35 @@ const EMPTY: EnquiryInput = {
 };
 
 const TOTAL = formSteps.length;
+const ALL_FIELDS = Object.keys(EMPTY) as (keyof EnquiryInput)[];
 
 export function ContactForm() {
   const [step, setStep] = useState(0);
   const [values, setValues] = useState<EnquiryInput>(EMPTY);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [formError, setFormError] = useState("");
-  const [done, setDone] = useState(false);
-  const [pending, startTransition] = useTransition();
+  const [clientErrors, setClientErrors] = useState<Record<string, string>>({});
   const reduced = useReducedMotion();
+
+  const [state, formAction, pending] = useActionState(
+    submitEnquiry,
+    initialSubmitState,
+  );
+
+  // Server errors are the base layer; a client entry (including an empty
+  // string, meaning "the user fixed this") takes precedence over it.
+  const errors: Record<string, string> = {
+    ...(state.fieldErrors ?? {}),
+    ...clientErrors,
+  };
 
   const set =
     (field: keyof EnquiryInput) =>
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    (
+      event: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >,
+    ) => {
       setValues((v) => ({ ...v, [field]: event.target.value }));
-      setErrors((e) => ({ ...e, [field]: "" }));
-      setFormError("");
+      setClientErrors((e) => ({ ...e, [field]: "" }));
     };
 
   /** Validate only the fields on the current step, so Next can gate progress. */
@@ -43,15 +57,22 @@ export function ContactForm() {
     const result = enquirySchema.safeParse(values);
     if (result.success) return true;
 
-    const next: Record<string, string> = {};
+    // Start from what the client already knows, then clear and re-evaluate
+    // just this step's fields, so a server error on an untouched field is not
+    // silently dropped.
+    const next: Record<string, string> = { ...clientErrors };
+    for (const field of fields) next[field] = "";
+
+    let failed = 0;
     for (const issue of result.error.issues) {
       const key = String(issue.path[0] ?? "");
       if ((fields as readonly string[]).includes(key) && !next[key]) {
         next[key] = issue.message;
+        failed += 1;
       }
     }
-    setErrors(next);
-    return Object.keys(next).length === 0;
+    setClientErrors(next);
+    return failed === 0;
   }
 
   function handleNext() {
@@ -59,22 +80,7 @@ export function ContactForm() {
     setStep((s) => Math.min(s + 1, TOTAL - 1));
   }
 
-  function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
-    if (!validateStep(step)) return;
-
-    startTransition(async () => {
-      const result = await submitEnquiry(values);
-      if (result.ok) {
-        setDone(true);
-        return;
-      }
-      setFormError(result.message);
-      if (result.fieldErrors) setErrors(result.fieldErrors);
-    });
-  }
-
-  if (done) {
+  if (state.ok) {
     return (
       <div
         data-testid="contact-success"
@@ -95,14 +101,21 @@ export function ContactForm() {
   }
 
   const isLast = step === TOTAL - 1;
+  const currentFields = STEP_FIELDS[step] as readonly string[];
+  // Values from other steps still have to reach the server action.
+  const hiddenFields = ALL_FIELDS.filter((f) => !currentFields.includes(f));
 
   return (
     <form
-      onSubmit={handleSubmit}
+      action={formAction}
       noValidate
       data-testid="contact-form"
-      className="glass-strong rounded-3xl p-7 sm:p-8"
+      className="glass-strong rounded-3xl p-6 sm:p-8"
     >
+      {hiddenFields.map((field) => (
+        <input key={field} type="hidden" name={field} value={values[field] ?? ""} />
+      ))}
+
       <div className="flex items-center justify-between">
         <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-slate-400">
           Step {step + 1} of {TOTAL}
@@ -235,39 +248,30 @@ export function ContactForm() {
       </div>
 
       <p aria-live="polite" className="min-h-5 text-xs text-rose-300">
-        {formError}
+        {state.ok ? "" : state.message}
       </p>
 
-      <div className="mt-5 flex items-center gap-3">
+      <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
         {step > 0 ? (
-          <button
+          <CtaButton
             type="button"
+            variant="subtle"
+            size="md"
             onClick={() => setStep((s) => s - 1)}
             data-testid="form-back"
-            className="inline-flex items-center gap-2 rounded-full border border-white/10 px-5 py-3 font-display text-xs font-bold uppercase tracking-wider text-slate-300 transition-colors duration-300 hover:text-white"
           >
             <ArrowLeft size={14} /> Back
-          </button>
+          </CtaButton>
         ) : null}
 
         {isLast ? (
-          <button
-            type="submit"
-            disabled={pending}
-            data-testid="form-submit"
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-7 py-3 font-display text-xs font-bold uppercase tracking-wider text-ink transition-all duration-300 hover:scale-[1.03] disabled:cursor-not-allowed disabled:opacity-60"
-          >
+          <CtaButton type="submit" size="md" disabled={pending} data-testid="form-submit">
             {pending ? "Sending…" : "Send enquiry"} <Send size={14} />
-          </button>
+          </CtaButton>
         ) : (
-          <button
-            type="button"
-            onClick={handleNext}
-            data-testid="form-next"
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-7 py-3 font-display text-xs font-bold uppercase tracking-wider text-ink transition-all duration-300 hover:scale-[1.03]"
-          >
+          <CtaButton type="button" size="md" onClick={handleNext} data-testid="form-next">
             Next <ArrowRight size={14} />
-          </button>
+          </CtaButton>
         )}
       </div>
     </form>

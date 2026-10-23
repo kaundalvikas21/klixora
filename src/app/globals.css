@@ -103,10 +103,11 @@
     scroll-behavior: smooth;
   }
 
-  /* Anchored sections clear the fixed header instead of hiding behind it. */
+  /* Anchored sections clear the fixed header instead of hiding behind it.
+     88px matches the offset the reference passes to its scroll call. */
   :target,
   section[id] {
-    scroll-margin-top: 6rem;
+    scroll-margin-top: 5.5rem;
   }
   body {
     background-color: var(--ink);

@@ -2,16 +2,26 @@
 
 import { useEffect } from "react";
 
-export default function GlobalError({
+/**
+ * Route-segment boundary. Note this does NOT cover the root layout —
+ * global-error.tsx handles that.
+ */
+export default function Error({
   error,
-  reset,
+  retry,
 }: {
-  error: Error & { digest?: string };
-  reset: () => void;
+  // Docs: a Client Component can throw a non-Error, so this arrives as unknown.
+  error: unknown;
+  retry: () => void;
 }) {
   useEffect(() => {
     console.error(error);
   }, [error]);
+
+  const digest =
+    error instanceof Error && "digest" in error
+      ? String((error as { digest?: unknown }).digest ?? "")
+      : "";
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
@@ -25,11 +35,16 @@ export default function GlobalError({
       </p>
       <button
         type="button"
-        onClick={reset}
+        onClick={() => retry()}
         className="mt-9 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-8 py-4 font-display text-sm font-bold uppercase tracking-wider text-ink transition-transform duration-300 hover:scale-[1.03]"
       >
         Try again
       </button>
+      {digest ? (
+        <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">
+          Reference {digest}
+        </p>
+      ) : null}
     </main>
   );
 }

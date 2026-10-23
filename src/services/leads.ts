@@ -3,16 +3,33 @@
 import { enquirySchema } from "@/utils/validation";
 import { getSupabaseClient } from "@/services/supabase";
 
-export type SubmitResult =
-  | { ok: true }
-  | { ok: false; message: string; fieldErrors?: Record<string, string> };
+export type SubmitResult = {
+  ok: boolean;
+  message: string;
+  fieldErrors?: Record<string, string>;
+};
+
+export const initialSubmitState: SubmitResult = { ok: false, message: "" };
 
 /**
- * Trust boundary: the client-side step validation is UX only. Everything is
- * re-validated here before it reaches the database.
+ * Trust boundary: client-side step validation is UX only. Everything is
+ * re-validated here before it reaches storage.
+ *
+ * Per the Next docs, expected errors are returned as values rather than
+ * thrown, so `useActionState` can render them inline.
  */
-export async function submitEnquiry(raw: unknown): Promise<SubmitResult> {
-  const parsed = enquirySchema.safeParse(raw);
+export async function submitEnquiry(
+  _prevState: SubmitResult,
+  formData: FormData,
+): Promise<SubmitResult> {
+  const parsed = enquirySchema.safeParse({
+    first_name: formData.get("first_name"),
+    last_name: formData.get("last_name"),
+    email: formData.get("email"),
+    mobile: formData.get("mobile"),
+    service: formData.get("service"),
+    message: formData.get("message") ?? "",
+  });
 
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
@@ -44,8 +61,6 @@ export async function submitEnquiry(raw: unknown): Promise<SubmitResult> {
 
   const { first_name, last_name, email, mobile, service, message } = parsed.data;
 
-  // Maps onto the project's existing `leads` table, which already carries an
-  // anon INSERT / admin-only SELECT policy. `status` defaults to 'new'.
   const { error } = await supabase.from("leads").insert({
     name: `${first_name} ${last_name}`,
     email,
@@ -64,5 +79,5 @@ export async function submitEnquiry(raw: unknown): Promise<SubmitResult> {
     };
   }
 
-  return { ok: true };
+  return { ok: true, message: "" };
 }
