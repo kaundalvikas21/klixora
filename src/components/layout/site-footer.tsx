@@ -38,9 +38,9 @@ export function SiteFooter() {
       />
 
       <Container className="relative py-14 md:py-16 lg:py-20">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-12 lg:gap-x-8">
           {/* brand */}
-          <div className="lg:col-span-4">
+          <div className="col-span-2 lg:col-span-4">
             <Link href="/#top" aria-label={`${site.name} home`}>
               <Image
                 src={site.logo}
@@ -81,7 +81,7 @@ export function SiteFooter() {
                 <li key={service}>
                   <Link
                     href="#services"
-                    className="text-sm text-slate-400 transition-colors duration-300 hover:text-cyan-300"
+                    className="block text-sm leading-snug text-slate-400 transition-colors duration-300 hover:text-cyan-300"
                   >
                     {service}
                   </Link>
@@ -108,7 +108,7 @@ export function SiteFooter() {
           </div>
 
           {/* contact */}
-          <div className="lg:col-span-3">
+          <div className="col-span-2 lg:col-span-3">
             <ColumnHeading>Get in touch</ColumnHeading>
             <ul className="mt-5 flex flex-col gap-4">
               {contactRows.map((row) => {

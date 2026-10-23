@@ -169,11 +169,13 @@ export function Hero() {
               data-testid="hero-dashboard"
               className="glass-strong rounded-3xl p-6 shadow-glow-violet"
             >
-              <div className="flex items-center justify-between">
-                <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-slate-400">
+              {/* Both labels are wide mono caps; below ~330px they have to be
+                  allowed to wrap rather than bleed out of the card. */}
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
+                <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400 sm:tracking-[0.24em]">
                   Live Campaign Tracking
                 </p>
-                <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-emerald-300">
+                <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-emerald-300 sm:tracking-[0.2em]">
                   <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-emerald-400" />
                   Tracking
                 </span>
@@ -198,11 +200,11 @@ export function Hero() {
                 ))}
               </div>
 
-              <div className="mt-5 flex items-center justify-between border-t border-white/5 pt-4">
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-t border-white/5 pt-4">
                 {["Reach", "Leads", "Conversions"].map((label) => (
                   <span
                     key={label}
-                    className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500"
+                    className="font-mono text-[10px] uppercase tracking-[0.12em] text-slate-400 sm:tracking-[0.18em]"
                   >
                     {label}
                   </span>

@@ -208,6 +208,33 @@ test.describe("footer", () => {
     await expect(footer.getByText(/All rights reserved/)).toBeVisible();
   });
 
+  test("link columns sit two-up on phones and expand on desktop", async ({
+    page,
+  }) => {
+    // Narrowest realistic phone first — two columns must still fit.
+    await page.setViewportSize({ width: 320, height: 568 });
+    await page.goto("/");
+    expect(await columnCount(page, '[data-testid="site-footer"] .grid')).toBe(2);
+
+    await page.setViewportSize({ width: 1440, height: 900 });
+    expect(await columnCount(page, '[data-testid="site-footer"] .grid')).toBe(12);
+  });
+
+  test("no footer link overflows its column on a 320px screen", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 320, height: 568 });
+    await page.goto("/");
+
+    const tight = await page.evaluate(() => {
+      const footer = document.querySelector('[data-testid="site-footer"]')!;
+      return [...footer.querySelectorAll("a")]
+        .filter((a) => a.scrollWidth > a.clientWidth + 1)
+        .map((a) => a.textContent?.trim().slice(0, 30) ?? "");
+    });
+    expect(tight).toEqual([]);
+  });
+
   for (const vp of VIEWPORTS) {
     test(`footer has no contrast violations at ${vp.width}px`, async ({ page }) => {
       await page.setViewportSize({ width: vp.width, height: vp.height });
