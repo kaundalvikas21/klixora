@@ -81,10 +81,10 @@ export function WhyUs() {
         <Reveal y={32} className="mt-5">
           <div className="relative overflow-hidden rounded-3xl">
             <Image
-              src="/why-team.jpg"
+              src="/why-team.webp"
               alt="Klixora team crafting growth campaigns"
-              width={940}
-              height={650}
+              width={1600}
+              height={900}
               className="h-56 w-full object-cover sm:h-64"
             />
             <div

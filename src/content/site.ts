@@ -5,7 +5,7 @@ export const site = {
   description:
     "Klixora — Growth Driven Digital Strategy for Bold Brands. Paid ads, SEO, social media, e-commerce and marketplace growth under one roof.",
   url: "https://klixora.site",
-  logo: "/klixora-logo-white.png",
+  logo: "/klixora-logo-white.webp",
   address: "Vardhman City, Kurukshetra, Haryana",
   email: "Info@Klixora.site",
   phone: "8668322325",
