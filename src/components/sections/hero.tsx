@@ -1,17 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import {
   motion,
   useMotionValue,
   useReducedMotion,
-  useScroll,
   useSpring,
-  useTransform,
 } from "motion/react";
 import type { PointerEvent } from "react";
 import { ArrowUpRight, PhoneCall } from "lucide-react";
+import { Cta } from "@/components/ui/cta";
+import { Container } from "@/components/ui/section";
 import { EASE } from "@/utils/motion";
 
 const TITLE_LINES = [
@@ -25,10 +24,7 @@ const BARS = [38, 62, 46, 78, 58, 92, 70, 100];
 
 export function Hero() {
   const reduced = useReducedMotion();
-  const { scrollY } = useScroll();
-  const bgY = useTransform(scrollY, [0, 900], [0, 150]);
-
-  // Pointer parallax for the ambient glows — desktop pointers only.
+  // Pointer parallax for the ambient glows, desktop pointers only.
   const px = useMotionValue(0);
   const py = useMotionValue(0);
   const glowX = useSpring(px, { stiffness: 35, damping: 18 });
@@ -45,13 +41,11 @@ export function Hero() {
       id="top"
       onPointerMove={handlePointerMove}
       data-testid="hero-section"
-      className="relative flex min-h-screen flex-col justify-center overflow-hidden pb-20 pt-32 lg:pb-14"
+      className="relative flex min-h-screen flex-col justify-center overflow-hidden pb-16 pt-28 md:pt-32 lg:pb-14"
     >
-      <motion.div
-        aria-hidden="true"
-        style={reduced ? undefined : { y: bgY }}
-        className="absolute inset-0 -z-10"
-      >
+      {/* Parallax is a CSS scroll timeline now, so it runs off the main
+          thread instead of a rAF loop reacting to scroll events. */}
+      <div aria-hidden="true" className="scroll-parallax absolute inset-0 -z-10">
         <Image
           src="/hero-bg.webp"
           alt=""
@@ -67,7 +61,7 @@ export function Hero() {
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-transparent to-ink" />
-      </motion.div>
+      </div>
 
       <div
         aria-hidden="true"
@@ -85,19 +79,21 @@ export function Hero() {
         className="absolute -right-32 top-1/3 -z-10 h-[420px] w-[420px] rounded-full bg-cyan-500/15 blur-[140px]"
       />
 
-      <div className="mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12">
+      <Container>
         <div className="grid items-center gap-14 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-7">
+          {/* min-w-0: grid items default to min-width:auto, so a long unbreakable
+              word would otherwise force the track wider than the container. */}
+          <div className="min-w-0 lg:col-span-7">
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: EASE }}
               className="eyebrow"
             >
-              {"// Klixora — Digital Growth Partner"}
+              {"// Klixora · Digital Growth Partner"}
             </motion.p>
 
-            <h1 className="mt-6 font-display text-[2.6rem] font-extrabold uppercase leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
+            <h1 className="mt-6 font-display text-[clamp(1.5rem,9vw,2.6rem)] font-extrabold uppercase leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
               {TITLE_LINES.map((line, lineIndex) => (
                 <motion.span
                   key={lineIndex}
@@ -111,7 +107,12 @@ export function Hero() {
                   className="block"
                 >
                   {line.map((seg, i) => (
-                    <span key={i} className={"gradient" in seg ? "text-gradient" : undefined}>
+                    <span
+                      key={i}
+                      className={
+                        "gradient" in seg ? "text-gradient" : undefined
+                      }
+                    >
                       {seg.t}
                     </span>
                   ))}
@@ -125,7 +126,7 @@ export function Hero() {
               transition={{ duration: 0.7, delay: 0.5, ease: EASE }}
               className="mt-7 max-w-xl text-sm leading-relaxed text-slate-400 sm:text-base"
             >
-              More than a digital agency — architects of growth strategies,
+              More than a digital agency. We are architects of growth strategies,
               engineers of digital presence, and the partner you call when
               you&apos;re serious about scaling.
             </motion.p>
@@ -134,24 +135,20 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.65, ease: EASE }}
-              className="mt-9 flex flex-wrap items-center gap-4"
+              className="mt-9 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4"
             >
-              <Link
-                href="#contact"
-                data-testid="hero-cta-enquire"
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-8 py-4 font-display text-sm font-bold uppercase tracking-wider text-ink transition-all duration-300 hover:scale-[1.03] hover:shadow-glow-cyan"
-              >
+              <Cta href="#contact" data-testid="hero-cta-enquire">
                 Enquire Now <ArrowUpRight size={16} />
-              </Link>
-              {/* Outlined twin of the primary — same pill, same weight, so the
+              </Cta>
+              {/* Outlined twin of the primary: same pill, same weight, so the
                   two CTAs read as a pair rather than a button and a link. */}
-              <Link
+              <Cta
                 href="#contact"
+                variant="secondary"
                 data-testid="hero-cta-call"
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 px-8 py-4 font-display text-sm font-bold uppercase tracking-wider text-slate-200 transition-all duration-300 hover:border-cyan-300/60 hover:text-white hover:shadow-glow-cyan"
               >
                 <PhoneCall size={14} /> Get on a Call Today
-              </Link>
+              </Cta>
             </motion.div>
           </div>
 
@@ -165,17 +162,22 @@ export function Hero() {
               data-testid="hero-dashboard"
               className="glass-strong rounded-3xl p-6 shadow-glow-violet"
             >
-              <div className="flex items-center justify-between">
-                <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-slate-400">
+              {/* Both labels are wide mono caps; below ~330px they have to be
+                  allowed to wrap rather than bleed out of the card. */}
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
+                <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400 sm:tracking-[0.24em]">
                   Live Campaign Tracking
                 </p>
-                <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-emerald-300">
+                <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-emerald-300 sm:tracking-[0.2em]">
                   <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-emerald-400" />
                   Tracking
                 </span>
               </div>
 
-              <div className="mt-7 flex h-40 items-end gap-2.5" aria-hidden="true">
+              <div
+                className="mt-7 flex h-40 items-end gap-2.5"
+                aria-hidden="true"
+              >
                 {BARS.map((h, i) => (
                   <motion.div
                     key={i}
@@ -191,11 +193,11 @@ export function Hero() {
                 ))}
               </div>
 
-              <div className="mt-5 flex items-center justify-between border-t border-white/5 pt-4">
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-t border-white/5 pt-4">
                 {["Reach", "Leads", "Conversions"].map((label) => (
                   <span
                     key={label}
-                    className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500"
+                    className="font-mono text-[10px] uppercase tracking-[0.12em] text-slate-400 sm:tracking-[0.18em]"
                   >
                     {label}
                   </span>
@@ -211,7 +213,7 @@ export function Hero() {
             </div>
           </motion.div>
         </div>
-      </div>
+      </Container>
 
       <motion.div
         initial={{ opacity: 0 }}
@@ -220,7 +222,7 @@ export function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute bottom-7 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 sm:flex"
       >
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-slate-500">
+        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-slate-400">
           Scroll to explore
         </span>
         <div className="h-9 w-px overflow-hidden bg-white/10">

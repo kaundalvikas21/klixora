@@ -18,7 +18,7 @@ export function StatCounter({ value, suffix, label, id }: Props) {
 
   useEffect(() => {
     // Reduced motion is handled by deriving `shown` below, so the effect only
-    // ever runs the animation itself — no synchronous setState on mount.
+    // ever runs the animation itself, with no synchronous setState on mount.
     if (!inView || reduced) return;
 
     const start = performance.now();
@@ -38,7 +38,7 @@ export function StatCounter({ value, suffix, label, id }: Props) {
 
   return (
     <div ref={ref} data-testid={`stat-${id}`} className="text-center">
-      <p className="font-display text-5xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl">
+      <p className="font-display text-4xl font-extrabold tracking-tight sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl">
         <span className="text-gradient">
           {shown}
           {suffix}

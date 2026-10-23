@@ -103,19 +103,32 @@
     scroll-behavior: smooth;
   }
 
-  /* Anchored sections clear the fixed header instead of hiding behind it. */
+  /* Anchored sections clear the fixed header instead of hiding behind it.
+     88px matches the offset the reference passes to its scroll call. */
   :target,
   section[id] {
-    scroll-margin-top: 6rem;
+    scroll-margin-top: 5.5rem;
   }
   body {
     background-color: var(--ink);
     color: #f1f5f9;
     font-family: var(--font-sans);
-    overflow-x: hidden;
+    /* No overflow-x here: `hidden` computes to hidden/auto, which makes <body>
+       a scroll container and silently kills position:sticky for everything
+       inside it. `html { overflow-x: clip }` above contains the decorative
+       glows without creating a scrollport. */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+  /* Grid and flex items default to min-width:auto, which lets a single long
+     word push its track wider than the container. The overflow is then
+     silently cut by the overflow-x:clip above. Zero-specificity so any
+     explicit min-w-* utility still wins. */
+  :where(.grid) > *,
+  :where(.flex) > * {
+    min-width: 0;
+  }
+
   :focus-visible {
     outline: 2px solid var(--cyan);
     outline-offset: 2px;
@@ -213,8 +226,78 @@
   }
 }
 
+/* --------------------------------------------------------------------------
+   Scroll-linked motion.
+
+   Lenis and friends smooth the wheel by calling preventDefault on it and
+   re-animating scrollTop in a rAF loop. That is scroll hijacking by
+   definition, and it is what made the page stutter whenever a frame dropped.
+
+   These timelines take the opposite approach: the browser keeps full control
+   of scrolling, and the animations are driven by scroll position instead of a
+   clock. The user agent is allowed to run them off the main thread, so they
+   stay in sync with scrolling even while JavaScript is busy.
+
+   Everything here is progressive enhancement. Browsers without
+   animation-timeline simply render the static end state.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    @keyframes hero-parallax {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(150px);
+      }
+    }
+
+    /* Hero backdrop drifts as the document scrolls past it. */
+    .scroll-parallax {
+      animation: hero-parallax linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 900px;
+      will-change: transform;
+    }
+
+    @keyframes rail-fill {
+      from {
+        transform: scaleY(0);
+      }
+      to {
+        transform: scaleY(1);
+      }
+    }
+
+    /* Process rail fills in step with its own section passing the viewport. */
+    .scroll-rail {
+      transform-origin: top;
+      animation: rail-fill linear both;
+      animation-timeline: view(block);
+      animation-range: entry 60% cover 70%;
+      will-change: transform;
+    }
+  }
+}
+
+/* No scroll-timeline support: show the finished state rather than an empty
+   rail or a jumped backdrop. */
+@supports not (animation-timeline: scroll()) {
+  .scroll-rail {
+    transform: scaleY(1);
+  }
+}
+
 /* Respect the user's motion preference across every ported animation. */
 @media (prefers-reduced-motion: reduce) {
+  /* Entrance animations start at opacity 0 in server-rendered markup. Without
+     this, reduced-motion visitors see nothing until hydration finishes and the
+     JS guard runs. */
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
   *,
   *::before,
   *::after {

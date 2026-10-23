@@ -1,9 +1,9 @@
 export const site = {
   name: "Klixora",
   tagline: "Growth Driven Digital Strategy",
-  title: "Klixora — Growth Driven Digital Strategy for Bold Brands",
+  title: "Klixora: Growth Driven Digital Strategy for Bold Brands",
   description:
-    "Klixora — Growth Driven Digital Strategy for Bold Brands. Paid ads, SEO, social media, e-commerce and marketplace growth under one roof.",
+    "Klixora: Growth Driven Digital Strategy for Bold Brands. Paid ads, SEO, social media, e-commerce and marketplace growth under one roof.",
   url: "https://klixora.site",
   logo: "/klixora-logo-white.webp",
   address: "Vardhman City, Kurukshetra, Haryana",
@@ -44,4 +44,36 @@ export const serviceOptions = [
   "Email & WhatsApp Marketing",
   "E-Commerce & Marketplace Listing",
   "Event Management",
+] as const;
+
+/** Footer service column. Labels only; they all route to the services section. */
+export const footerServices = [
+  "Website Audit & Strategy",
+  "Social Media Marketing",
+  "SEO Optimization",
+  "Paid Ads (Meta & Google)",
+  "E-Commerce & Marketplace",
+  "Event Management",
+] as const;
+
+/** Replace the hrefs with the real profiles when they exist. */
+export const socials = [
+  { label: "LinkedIn", key: "linkedin", href: "#" },
+  { label: "Instagram", key: "instagram", href: "#" },
+  { label: "Facebook", key: "facebook", href: "#" },
+  { label: "YouTube", key: "youtube", href: "#" },
+] as const;
+
+export const legalLinks = [
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms of Service", href: "/terms" },
+] as const;
+
+/** Section ids the header watches to highlight the current link. */
+export const sectionIds = [
+  "services",
+  "results",
+  "why-us",
+  "process",
+  "contact",
 ] as const;

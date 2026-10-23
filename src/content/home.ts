@@ -72,7 +72,7 @@ export const whyCards = [
   {
     id: "data-driven",
     title: "Data-Driven Approach",
-    desc: "Decisions based on real data and analytics to maximize your ROI — no guesswork, ever.",
+    desc: "Decisions based on real data and analytics to maximize your ROI, with no guesswork.",
     span: "lg:col-span-4",
     chart: true,
   },
@@ -119,25 +119,25 @@ export const processSteps = [
     step: "01",
     title: "Research",
     subtitle: "We Listen Before We Plan",
-    desc: "Before a single creative is made or a single rupee is spent — we audit. Your brand, competitors, audience, and growth gaps. Where most agencies skip, we don't.",
+    desc: "Before a single creative is made or a single rupee is spent, we audit. Your brand, competitors, audience, and growth gaps. Where most agencies skip, we don't.",
   },
   {
     step: "02",
     title: "Strategize",
     subtitle: "Your Roadmap, Built to Win",
-    desc: "A full-funnel strategy — which channels, what content, which ads, in what sequence. No cookie-cutter plans; every strategy is built for your business.",
+    desc: "A full-funnel strategy covering which channels, what content, which ads, in what sequence. No cookie-cutter plans; every strategy is built for your business.",
   },
   {
     step: "03",
     title: "Create",
     subtitle: "Content That Actually Converts",
-    desc: "Reels, carousels, ad copies, landing pages, email flows — every piece designed to move your audience from awareness to action.",
+    desc: "Reels, carousels, ad copies, landing pages, email flows. Every piece is designed to move your audience from awareness to action.",
   },
   {
     step: "04",
     title: "Optimize",
     subtitle: "Live. Tracked. Optimized.",
-    desc: "Underperforming ads get paused, winners get boosted, copy gets refined, audiences get retargeted. Optimization is not a phase — it's a habit.",
+    desc: "Underperforming ads get paused, winners get boosted, copy gets refined, audiences get retargeted. Optimization is a habit, not a phase.",
   },
   {
     step: "05",

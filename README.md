@@ -1,6 +1,6 @@
 # Klixora
 
-Growth-driven digital strategy site for Klixora — a Next.js 16 rebuild of the
+Growth-driven digital strategy site for Klixora, a Next.js 16 rebuild of the
 original Emergent preview SPA, on an owned, deployable foundation.
 
 ## Stack
@@ -72,7 +72,7 @@ public/                    # images, logo, favicon
 
 `(frontend)` is a route group: the parentheses keep it out of the URL, so
 `src/app/(frontend)/page.tsx` still serves `/`. Its `layout.tsx` is the shared
-page layout — header, footer and FAB are declared once there instead of being
+page layout. Header, footer and FAB are declared once there instead of being
 repeated in every page.
 
 Nav links are hash-only (`#services`), which the browser resolves against the
@@ -84,24 +84,60 @@ carousel, reveals and the contact form.
 
 ## Scrolling
 
-Smooth scrolling is `scroll-behavior: smooth` on `<html>` — no JS scroll
-library. A hijacking library (Lenis, Locomotive) replaces the browser's own
-scroll with a rAF loop, which costs you native wheel momentum, trackpad
-inertia and an honest scrollbar, and stutters when a frame is dropped.
+No scroll library, and nothing intercepts the wheel.
 
-Anchored sections carry `scroll-margin-top: 6rem` so they clear the fixed
-header instead of hiding under it. Under `prefers-reduced-motion`, smooth
-scrolling reverts to `auto`.
+Lenis and similar libraries work by listening for `wheel` with
+`{ passive: false }`, calling `preventDefault()` on it, and re-animating the
+scroll position in a `requestAnimationFrame` loop. Their own source says as
+much:
+
+```
+// - listen to 'wheel' events
+// - prevent 'wheel' event to prevent scroll
+// - normalize wheel delta
+// - add delta to targetScroll
+// - animate scroll to targetScroll
+```
+
+That is scroll hijacking by definition. It costs native wheel momentum,
+trackpad inertia and an honest scrollbar, and it stutters whenever a frame is
+dropped, because scrolling now depends on the main thread keeping up.
+
+This site takes the opposite approach. The browser keeps full control of
+scrolling, and anything that should feel connected to scroll is driven by
+scroll position instead of a clock:
+
+| Behaviour | Mechanism |
+|---|---|
+| Anchor jumps | `scroll-behavior: smooth`, with `scroll-margin-top: 5.5rem` so sections clear the fixed header |
+| Hero backdrop parallax | `animation-timeline: scroll(root block)` |
+| Process rail fill | `animation-timeline: view(block)` |
+| Section reveals | IntersectionObserver, fired once |
+
+The two scroll timelines replaced `useScroll` loops that ran on the main
+thread. The spec lets a browser sample scroll-driven animations off the main
+thread and in sync with asynchronous scrolling, so they stay glued to the
+scrollbar even while JavaScript is busy. You can confirm both are live in
+DevTools: `document.getAnimations()` reports a `ScrollTimeline` and a
+`ViewTimeline`.
+
+Support is Chrome and Edge 115+, Safari 26+, Firefox 159+, about 88% of users.
+Everything is wrapped in `@supports (animation-timeline: scroll())`, so
+browsers without it render the static end state rather than a broken one. All
+of it sits inside `prefers-reduced-motion: no-preference`.
+
+What this does not do is smooth the wheel itself. Nothing can, without
+intercepting it.
 
 ## Routing and proxy
 
 There is deliberately no `proxy.ts`. Every route is statically prerendered and
-nothing needs to run per-request — no auth, no locale negotiation, no
+nothing needs to run per-request: no auth, no locale negotiation, no
 rewrites. A proxy would put a Node function in front of files a CDN can serve
 on its own.
 
 Add one when you need auth gating, redirects, locale routing or A/B bucketing.
-In Next 16 the file is `proxy.ts` at the project root (`src/proxy.ts` here) —
+In Next 16 the file is `proxy.ts` at the project root (`src/proxy.ts` here).
 `middleware.ts` and the `middleware` named export are **deprecated**:
 
 ```ts
@@ -116,7 +152,7 @@ export const config = { matcher: ["/((?!_next/static|_next/image|.*\\..*).*)"] }
 ```
 
 The runtime is `nodejs` and is not configurable; `edge` is unsupported in
-`proxy`. Config flags renamed too — `skipMiddlewareUrlNormalize` is now
+`proxy`. Config flags were renamed too: `skipMiddlewareUrlNormalize` is now
 `skipProxyUrlNormalize`. Response headers belong in `next.config.ts` under
 `headers()`, not in a proxy.
 
@@ -135,7 +171,7 @@ Utilities ported from the original build: `.glass`, `.glass-strong`, `.eyebrow`,
 `.text-gradient`, `.input-glass`, `.bg-grid`, `.shadow-glow-*`, `.no-scrollbar`,
 `.marquee-paused`.
 
-Motion constants are centralised in `lib/motion.ts` — shared easing
+Motion constants are centralised in `utils/motion.ts`: shared easing
 `[0.22, 1, 0.36, 1]`, a 0.7s reveal with a `(i % 3)` column stagger, and the
 tilt spring. Every primitive honours `prefers-reduced-motion`.
 
@@ -145,8 +181,8 @@ The 4-step enquiry form is complete: client-side step gating plus server-side
 re-validation in `app/actions/submit-enquiry.ts` (the real trust boundary).
 
 Storage is **intentionally not connected**. With no credentials set, the action
-validates the enquiry, logs a warning and tells the visitor to email instead —
-it never reports a success it did not achieve.
+validates the enquiry, logs a warning and tells the visitor to email instead. It
+never reports a success it did not achieve.
 
 To switch it on, copy `.env.example` to `.env.local` and fill in:
 

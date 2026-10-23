@@ -6,13 +6,13 @@ import { cn } from "@/utils/cn";
 export function BrandMarquee() {
   return (
     <Reveal y={24} className="relative border-y border-white/5 bg-white/[0.02] py-9">
-      <p className="mb-7 px-5 text-center font-mono text-[10px] uppercase tracking-[0.32em] text-slate-500 sm:px-8">
+      <p className="mb-7 px-5 text-center font-mono text-[10px] uppercase tracking-[0.32em] text-slate-400 sm:px-8">
         Trusted by forward-thinking brands
       </p>
 
       <div className="marquee-paused overflow-hidden" data-testid="clients-marquee">
         <div className="flex w-max animate-marquee">
-          {/* Track is duplicated so the -50% keyframe loops seamlessly. */}
+          {/* Track is duplicated so the -50% keyframe loops without a visible jump. */}
           {[0, 1].map((copy) => (
             <div
               key={copy}

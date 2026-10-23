@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 
 /**
  * Server-side Supabase client for the enquiry insert.
- * Uses the publishable (anon) key — the `enquiries` table is protected by an
+ * Uses the publishable (anon) key. The `leads` table is protected by an
  * RLS policy that allows INSERT only, so the key cannot read anyone's data.
  */
 export function getSupabaseClient() {
