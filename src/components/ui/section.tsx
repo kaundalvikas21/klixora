@@ -43,7 +43,7 @@ export function Section({
     <section
       id={id}
       data-testid={testId}
-      className={cn("relative", padded && SECTION_Y, className)}
+      className={cn("relative overflow-x-clip", padded && SECTION_Y, className)}
     >
       {glow}
       {contained ? <Container>{children}</Container> : children}

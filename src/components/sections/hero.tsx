@@ -88,7 +88,9 @@ export function Hero() {
 
       <Container>
         <div className="grid items-center gap-14 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-7">
+          {/* min-w-0: grid items default to min-width:auto, so a long unbreakable
+              word would otherwise force the track wider than the container. */}
+          <div className="min-w-0 lg:col-span-7">
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -98,7 +100,7 @@ export function Hero() {
               {"// Klixora — Digital Growth Partner"}
             </motion.p>
 
-            <h1 className="mt-6 font-display text-[2.6rem] font-extrabold uppercase leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
+            <h1 className="mt-6 font-display text-[clamp(1.5rem,9vw,2.6rem)] font-extrabold uppercase leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
               {TITLE_LINES.map((line, lineIndex) => (
                 <motion.span
                   key={lineIndex}

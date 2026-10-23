@@ -62,7 +62,7 @@ export function SiteHeader() {
       >
         {/* Hash-only hrefs resolve against the current route, so the same links
             work on the home page and on both vertical pages. */}
-        <Link href="#top" className="shrink-0" aria-label={`${site.name} home`}>
+        <Link href="/#top" className="shrink-0" aria-label={`${site.name} home`}>
           <Image
             src={site.logo}
             alt={site.name}

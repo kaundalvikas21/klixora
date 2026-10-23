@@ -41,7 +41,7 @@ export function SiteFooter() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
           {/* brand */}
           <div className="lg:col-span-4">
-            <Link href="#top" aria-label={`${site.name} home`}>
+            <Link href="/#top" aria-label={`${site.name} home`}>
               <Image
                 src={site.logo}
                 alt={site.name}

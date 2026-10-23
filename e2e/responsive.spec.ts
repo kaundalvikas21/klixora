@@ -3,7 +3,9 @@ import { expect, test, type Page } from "@playwright/test";
 
 const ROUTES = ["/", "/agri-marketing", "/event-management"] as const;
 const VIEWPORTS = [
-  { name: "mobile", width: 375, height: 760 },
+  { name: "galaxy-s8", width: 360, height: 740 },
+  { name: "mi-11i", width: 393, height: 873 },
+  { name: "iphone", width: 375, height: 760 },
   { name: "tablet", width: 768, height: 1024 },
   { name: "desktop", width: 1440, height: 900 },
 ] as const;
@@ -28,12 +30,26 @@ test.describe("responsive layout", () => {
         await page.setViewportSize({ width: vp.width, height: vp.height });
         await page.goto(route);
 
-        const overflow = await page.evaluate(
-          () =>
-            document.documentElement.scrollWidth -
-            document.documentElement.clientWidth,
-        );
-        expect(overflow).toBeLessThanOrEqual(1);
+        // html carries overflow-x:clip, so scrollWidth can never report
+        // overflow. Content that bleeds is simply cut off and invisible —
+        // element boxes are the only honest signal.
+        const contentOverflow = await page.evaluate(() => {
+          const out: string[] = [];
+          for (const el of document.querySelectorAll("body *")) {
+            const cs = getComputedStyle(el);
+            if (cs.position === "fixed") continue;
+            if (el.scrollWidth > el.clientWidth + 1 && cs.overflowX === "visible") {
+              const sec =
+                (el.closest("[data-testid]") as HTMLElement | null)?.dataset
+                  .testid ?? "?";
+              // The testimonial stack deliberately peeks past its container.
+              if (sec.startsWith("testimonial")) continue;
+              out.push(`${sec}:${el.tagName}`);
+            }
+          }
+          return out;
+        });
+        expect(contentOverflow).toEqual([]);
 
         // Deliberately clipped tracks (the brand and ribbon marquees) are wider
         // than the viewport by design, so only unclipped elements are checked.
@@ -208,4 +224,41 @@ test.describe("footer", () => {
       expect(blocking.map((v) => v.id)).toEqual([]);
     });
   }
+});
+
+test.describe("site logo", () => {
+  for (const from of ["/agri-marketing", "/event-management"] as const) {
+    test(`returns to the home hero from ${from}`, async ({ page }) => {
+      await page.goto(from);
+
+      // Both heroes carry id="top", so a bare "#top" used to stay on the
+      // current page instead of going home.
+      await page.getByTestId("site-header").getByRole("link").first().click();
+
+      await expect(page).toHaveURL(/\/#top$/);
+      await expect(page.getByTestId("hero-section")).toBeVisible();
+    });
+  }
+});
+
+test("the process column actually pins while scrolling", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+
+  const delta = await page.evaluate(async () => {
+    const sticky = document.querySelector(
+      '[data-testid="process-section"] .lg\\:sticky',
+    ) as HTMLElement;
+    document
+      .querySelector('[data-testid="process-section"]')!
+      .scrollIntoView({ block: "start", behavior: "instant" });
+    await new Promise((r) => setTimeout(r, 300));
+    const before = sticky.getBoundingClientRect().top;
+    window.scrollBy({ top: 400, behavior: "instant" });
+    await new Promise((r) => setTimeout(r, 300));
+    return sticky.getBoundingClientRect().top - before;
+  });
+
+  // Not sticking at all would move it the full -400. Pinning holds it near 0.
+  expect(delta).toBeGreaterThan(-200);
 });

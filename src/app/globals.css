@@ -113,10 +113,22 @@
     background-color: var(--ink);
     color: #f1f5f9;
     font-family: var(--font-sans);
-    overflow-x: hidden;
+    /* No overflow-x here: `hidden` computes to hidden/auto, which makes <body>
+       a scroll container and silently kills position:sticky for everything
+       inside it. `html { overflow-x: clip }` above contains the decorative
+       glows without creating a scrollport. */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+  /* Grid and flex items default to min-width:auto, which lets a single long
+     word push its track wider than the container — the overflow is then
+     silently cut by the overflow-x:clip above. Zero-specificity so any
+     explicit min-w-* utility still wins. */
+  :where(.grid) > *,
+  :where(.flex) > * {
+    min-width: 0;
+  }
+
   :focus-visible {
     outline: 2px solid var(--cyan);
     outline-offset: 2px;
