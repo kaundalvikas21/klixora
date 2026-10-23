@@ -1,3 +1,11 @@
+import {
+  CalendarCheck,
+  CalendarPlus,
+  ClipboardCheck,
+  Handshake,
+  type LucideIcon,
+} from "lucide-react";
+
 /** One segment of a hero headline; `gradient` paints it cyan → violet. */
 export type TitleSegment = { t: string; gradient?: boolean };
 
@@ -11,6 +19,8 @@ export type PageContent = {
   titleLines: TitleSegment[][];
   sub: string;
   ctaPrimary: string;
+  /** Icon for the hero CTA — picked to match the action, not a generic arrow. */
+  ctaPrimaryIcon: LucideIcon;
   heroImg: string;
   heroAlt: string;
   stats?: { value: string; label: string }[];
@@ -38,6 +48,7 @@ export type PageContent = {
   ctaTitle: string;
   ctaSub: string;
   ctaLabel: string;
+  ctaBandIcon: LucideIcon;
 };
 
 export const agriContent: PageContent = {
@@ -50,6 +61,7 @@ export const agriContent: PageContent = {
   ],
   sub: "Klixora helps agri brands connect with rural audiences through digital, offline-first, and insight-led communication. From performance marketing to mass audio engagement and research-driven campaigns — strategies that work where it matters most.",
   ctaPrimary: "Book Strategy Call",
+  ctaPrimaryIcon: CalendarCheck,
   heroImg: "/pages/agri-hero.png",
   heroAlt: "Agri marketing for rural India by Klixora",
   ribbon: "Specialization in Agri Marketing",
@@ -105,6 +117,7 @@ export const agriContent: PageContent = {
   ctaSub:
     "Whether your goal is to engage farmers, gather insights, or scale your digital presence — Klixora helps you build meaningful conversations that create real impact.",
   ctaLabel: "Let's Connect",
+  ctaBandIcon: Handshake,
 };
 
 export const eventsContent: PageContent = {
@@ -117,6 +130,7 @@ export const eventsContent: PageContent = {
   ],
   sub: "From concept to execution, Klixora delivers end-to-end event management solutions that help brands create impactful experiences, engage audiences, and build lasting impressions.",
   ctaPrimary: "Plan Your Event",
+  ctaPrimaryIcon: CalendarPlus,
   heroImg: "/pages/event-hero.png",
   heroAlt: "Event management by Klixora",
   stats: [
@@ -175,4 +189,5 @@ export const eventsContent: PageContent = {
   ctaSub:
     "From planning to promotion, we help brands create unforgettable experiences. Get your event managed by Klixora.",
   ctaLabel: "Get Your Event Managed",
+  ctaBandIcon: ClipboardCheck,
 };

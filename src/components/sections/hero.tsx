@@ -11,7 +11,7 @@ import {
   useTransform,
 } from "motion/react";
 import type { PointerEvent } from "react";
-import { ArrowRight, Phone } from "lucide-react";
+import { ArrowUpRight, PhoneCall } from "lucide-react";
 import { EASE } from "@/utils/motion";
 
 const TITLE_LINES = [
@@ -138,17 +138,19 @@ export function Hero() {
             >
               <Link
                 href="#contact"
-                data-testid="hero-cta-primary"
+                data-testid="hero-cta-enquire"
                 className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-8 py-4 font-display text-sm font-bold uppercase tracking-wider text-ink transition-all duration-300 hover:scale-[1.03] hover:shadow-glow-cyan"
               >
-                Enquire Now <ArrowRight size={16} />
+                Enquire Now <ArrowUpRight size={16} />
               </Link>
+              {/* Outlined twin of the primary — same pill, same weight, so the
+                  two CTAs read as a pair rather than a button and a link. */}
               <Link
                 href="#contact"
-                data-testid="hero-cta-secondary"
-                className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-slate-300 transition-colors duration-300 hover:text-cyan-300"
+                data-testid="hero-cta-call"
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 px-8 py-4 font-display text-sm font-bold uppercase tracking-wider text-slate-200 transition-all duration-300 hover:border-cyan-300/60 hover:text-white hover:shadow-glow-cyan"
               >
-                <Phone size={14} /> Get on a Call Today
+                <PhoneCall size={14} /> Get on a Call Today
               </Link>
             </motion.div>
           </div>

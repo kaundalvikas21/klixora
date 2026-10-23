@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { JetBrains_Mono, Plus_Jakarta_Sans, Syne } from "next/font/google";
-import { LenisProvider } from "@/components/layout/lenis-provider";
 import { site } from "@/content/site";
 import "./globals.css";
 
@@ -67,7 +66,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         >
           Skip to content
         </a>
-        <LenisProvider>{children}</LenisProvider>
+        {children}
       </body>
     </html>
   );

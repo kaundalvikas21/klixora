@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import { navLinks, site } from "@/content/site";
 import { useLockBody } from "@/hooks/use-lock-body";
 import { useScrolled } from "@/hooks/use-scrolled";
@@ -56,9 +56,9 @@ export function SiteHeader() {
           <Link
             href="#contact"
             data-testid="nav-cta"
-            className="hidden rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-5 py-2.5 font-display text-[11px] font-bold uppercase tracking-wider text-ink transition-transform duration-300 hover:scale-[1.04] sm:inline-flex"
+            className="hidden items-center gap-1.5 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-5 py-2.5 font-display text-xs font-bold uppercase tracking-wider text-ink transition-shadow duration-300 hover:shadow-glow-cyan sm:inline-flex"
           >
-            Enquire Now
+            Enquire Now <ArrowUpRight size={14} />
           </Link>
           <button
             type="button"
@@ -96,9 +96,9 @@ export function SiteHeader() {
           <Link
             href="#contact"
             onClick={() => setOpen(false)}
-            className="mt-4 flex items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-5 py-3.5 font-display text-xs font-bold uppercase tracking-wider text-ink"
+            className="mt-4 flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-5 py-3.5 font-display text-xs font-bold uppercase tracking-wider text-ink"
           >
-            Enquire Now
+            Enquire Now <ArrowUpRight size={14} />
           </Link>
         </div>
       ) : null}

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, Check } from "lucide-react";
+import { AlertTriangle, Check } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 import { TiltCard } from "@/components/motion/tilt-card";
 import { staggerDelay } from "@/utils/motion";
@@ -16,6 +16,9 @@ function Heading({ lead, accent }: SplitHeading) {
 }
 
 export function SubPage({ content }: { content: PageContent }) {
+  const HeroIcon = content.ctaPrimaryIcon;
+  const BandIcon = content.ctaBandIcon;
+
   return (
     <>
         {/* ---------------------------------------------------------- hero */}
@@ -66,7 +69,7 @@ export function SubPage({ content }: { content: PageContent }) {
                     data-testid="page-hero-cta"
                     className="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-8 py-4 font-display text-sm font-bold uppercase tracking-wider text-ink transition-all duration-300 hover:scale-[1.03] hover:shadow-glow-cyan"
                   >
-                    {content.ctaPrimary} <ArrowRight size={16} />
+                    {content.ctaPrimary} <HeroIcon size={16} />
                   </Link>
                 </Reveal>
 
@@ -336,7 +339,7 @@ export function SubPage({ content }: { content: PageContent }) {
                   data-testid="page-cta-button"
                   className="mt-9 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-9 py-4 font-display text-sm font-bold uppercase tracking-wider text-ink transition-all duration-300 hover:scale-[1.03] hover:shadow-glow-cyan"
                 >
-                  {content.ctaLabel} <ArrowRight size={16} />
+                  {content.ctaLabel} <BandIcon size={16} />
                 </Link>
               </div>
             </Reveal>

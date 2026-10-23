@@ -98,7 +98,15 @@
   }
   html {
     overflow-x: clip;
-    scroll-behavior: auto; /* Lenis drives smooth scroll; see lenis-provider */
+    /* Native smooth scroll. No JS scroll hijacking: the wheel keeps its real
+       momentum and the scrollbar stays truthful. */
+    scroll-behavior: smooth;
+  }
+
+  /* Anchored sections clear the fixed header instead of hiding behind it. */
+  :target,
+  section[id] {
+    scroll-margin-top: 6rem;
   }
   body {
     background-color: var(--ink);
@@ -107,10 +115,6 @@
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-  }
-  /* Lenis disables native smoothing while it is active. */
-  html.lenis.lenis-smooth {
-    scroll-behavior: auto !important;
   }
   :focus-visible {
     outline: 2px solid var(--cyan);
