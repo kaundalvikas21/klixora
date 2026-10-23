@@ -12,7 +12,7 @@ import {
 } from "motion/react";
 import type { PointerEvent } from "react";
 import { ArrowRight, Phone } from "lucide-react";
-import { EASE } from "@/lib/motion";
+import { EASE } from "@/utils/motion";
 
 const TITLE_LINES = [
   [{ t: "GROWTH " }, { t: "DRIVEN", gradient: true }],

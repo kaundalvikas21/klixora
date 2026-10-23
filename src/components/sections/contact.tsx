@@ -1,7 +1,7 @@
 import { Check, Clock, Mail, MapPin, Phone } from "lucide-react";
 import { ContactForm } from "@/components/sections/contact-form";
 import { Reveal } from "@/components/motion/reveal";
-import { SectionHeading } from "@/components/section-heading";
+import { SectionHeading } from "@/components/ui/section-heading";
 import { contactPromises } from "@/content/home";
 import { site } from "@/content/site";
 

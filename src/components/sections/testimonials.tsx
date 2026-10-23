@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
-import { SectionHeading } from "@/components/section-heading";
+import { SectionHeading } from "@/components/ui/section-heading";
 import { testimonials } from "@/content/home";
-import { EASE } from "@/lib/motion";
+import { EASE } from "@/utils/motion";
 
 const COUNT = testimonials.length;
 const AUTOPLAY_MS = 5500;

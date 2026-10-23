@@ -3,8 +3,8 @@ import { Check } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 import { TiltCard } from "@/components/motion/tilt-card";
 import { whyCards, whyPills } from "@/content/home";
-import { staggerDelay } from "@/lib/motion";
-import { cn } from "@/lib/utils";
+import { staggerDelay } from "@/utils/motion";
+import { cn } from "@/utils/cn";
 
 const MINI_CHART = [34, 52, 44, 68, 60, 86];
 

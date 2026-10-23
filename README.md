@@ -20,6 +20,11 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
+> Run everything from **one** environment. `node_modules` holds
+> platform-specific binaries (Next's SWC, Playwright's browsers), so a tree
+> installed on Windows will not run under WSL and vice versa. Switching means
+> `rm -rf node_modules && npm install` plus `npx playwright install`.
+
 ```bash
 npm run build      # production build
 npm run start      # serve the build
@@ -41,19 +46,41 @@ driven by typed content in `content/pages.ts`.
 ## Where things live
 
 ```
-app/           routes, root layout, server actions, sitemap/robots
-components/
-  layout/      header, footer, WhatsApp FAB, Lenis provider
-  motion/      Reveal, StatCounter, TiltCard — the shared motion primitives
-  sections/    one file per home section; sub/ holds the vertical template
-content/       all copy, typed. Edit here, not in components.
-lib/           cn(), motion constants, zod schema, Supabase client
-e2e/           Playwright specs
+src/
+├── app/
+│   ├── (frontend)/        # public marketing routes
+│   │   ├── layout.tsx     # shared chrome: header + footer + FAB
+│   │   ├── page.tsx       # /
+│   │   ├── agri-marketing/page.tsx
+│   │   └── event-management/page.tsx
+│   ├── layout.tsx         # root: html/body, fonts, Lenis
+│   ├── globals.css        # design tokens + utilities
+│   ├── error.tsx  not-found.tsx
+│   └── sitemap.ts  robots.ts
+├── components/
+│   ├── layout/            # header, footer, WhatsApp FAB, Lenis provider
+│   ├── motion/            # Reveal, StatCounter, TiltCard
+│   ├── sections/          # one file per section; sub/ = vertical template
+│   └── ui/                # SectionHeading, JsonLd
+├── content/               # all copy, typed. Edit here, not in components.
+├── hooks/                 # useScrolled, useLockBody
+├── services/              # supabase client, leads submission
+└── utils/                 # cn, motion constants, validation schema
+e2e/                       # Playwright specs
+public/                    # images, logo, favicon
 ```
 
+`(frontend)` is a route group: the parentheses keep it out of the URL, so
+`src/app/(frontend)/page.tsx` still serves `/`. Its `layout.tsx` is the shared
+page layout — header, footer and FAB are declared once there instead of being
+repeated in every page.
+
+Nav links are hash-only (`#services`), which the browser resolves against the
+current route. The same header works on all three pages with no per-page props.
+
 Pages and section shells are **server components**. Only the pieces that need
-browser APIs are `'use client'`: the Lenis provider, header scroll state, the
-tilt cards, stat counters, carousel, reveals and the contact form.
+browser APIs are `'use client'`: the Lenis provider, header, tilt cards, stat
+counters, carousel, reveals and the contact form.
 
 ## Design system
 

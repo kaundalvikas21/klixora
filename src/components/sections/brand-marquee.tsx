@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Reveal } from "@/components/motion/reveal";
 import { brands } from "@/content/site";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 export function BrandMarquee() {
   return (

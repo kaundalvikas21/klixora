@@ -2,9 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { navLinks, site } from "@/content/site";
 
-export function SiteFooter({ basePath = "" }: { basePath?: string }) {
-  const href = (h: string) => (h.startsWith("#") ? `${basePath}${h}` : h);
-
+export function SiteFooter() {
   return (
     <footer
       data-testid="site-footer"
@@ -29,7 +27,7 @@ export function SiteFooter({ basePath = "" }: { basePath?: string }) {
             {navLinks.map((link) => (
               <li key={link.label}>
                 <Link
-                  href={href(link.href)}
+                  href={link.href}
                   className="font-mono text-[11px] uppercase tracking-[0.18em] text-slate-400 transition-colors duration-300 hover:text-cyan-300"
                 >
                   {link.label}

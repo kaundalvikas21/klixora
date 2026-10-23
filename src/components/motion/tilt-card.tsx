@@ -11,8 +11,8 @@ import {
   TILT_ROTATE_Y,
   TILT_SPRING,
   VIEWPORT,
-} from "@/lib/motion";
-import { cn } from "@/lib/utils";
+} from "@/utils/motion";
+import { cn } from "@/utils/cn";
 
 type TiltCardProps = {
   children: ReactNode;

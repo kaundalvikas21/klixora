@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 import { TiltCard } from "@/components/motion/tilt-card";
 import { services } from "@/content/home";
-import { staggerDelay } from "@/lib/motion";
+import { staggerDelay } from "@/utils/motion";
 
 export function Services() {
   return (

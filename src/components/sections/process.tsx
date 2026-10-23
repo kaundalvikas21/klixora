@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useSpring } from "motion/react";
 import { Reveal } from "@/components/motion/reveal";
 import { processSteps } from "@/content/home";
-import { EASE, VIEWPORT } from "@/lib/motion";
+import { EASE, VIEWPORT } from "@/utils/motion";
 
 export function Process() {
   const trackRef = useRef<HTMLDivElement>(null);

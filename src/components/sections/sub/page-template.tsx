@@ -1,12 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AlertTriangle, ArrowRight, Check } from "lucide-react";
-import { SiteHeader } from "@/components/layout/site-header";
-import { SiteFooter } from "@/components/layout/site-footer";
-import { WhatsAppFab } from "@/components/layout/whatsapp-fab";
 import { Reveal } from "@/components/motion/reveal";
 import { TiltCard } from "@/components/motion/tilt-card";
-import { staggerDelay } from "@/lib/motion";
+import { staggerDelay } from "@/utils/motion";
 import type { PageContent, SplitHeading } from "@/content/pages";
 
 function Heading({ lead, accent }: SplitHeading) {
@@ -19,12 +16,8 @@ function Heading({ lead, accent }: SplitHeading) {
 }
 
 export function SubPage({ content }: { content: PageContent }) {
-  const base = `/${content.slug}`;
-
   return (
     <>
-      <SiteHeader basePath={base} />
-      <main id="main">
         {/* ---------------------------------------------------------- hero */}
         <section
           id="top"
@@ -349,9 +342,6 @@ export function SubPage({ content }: { content: PageContent }) {
             </Reveal>
           </div>
         </section>
-      </main>
-      <SiteFooter basePath={base} />
-      <WhatsAppFab />
     </>
   );
 }

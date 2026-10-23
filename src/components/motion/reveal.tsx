@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
-import { EASE, REVEAL_DURATION, VIEWPORT } from "@/lib/motion";
+import { EASE, REVEAL_DURATION, VIEWPORT } from "@/utils/motion";
 
 type RevealProps = {
   children: ReactNode;

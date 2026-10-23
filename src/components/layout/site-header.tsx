@@ -2,35 +2,17 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { navLinks, site } from "@/content/site";
-import { cn } from "@/lib/utils";
+import { useLockBody } from "@/hooks/use-lock-body";
+import { useScrolled } from "@/hooks/use-scrolled";
+import { cn } from "@/utils/cn";
 
-/**
- * Anchor links point at the current page on the sub-pages, so `basePath`
- * keeps "#services" resolving to the right document.
- */
-export function SiteHeader({ basePath = "" }: { basePath?: string }) {
-  const [scrolled, setScrolled] = useState(false);
+export function SiteHeader() {
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Stop the page scrolling behind the open mobile sheet.
-  useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [open]);
-
-  const href = (h: string) => (h.startsWith("#") ? `${basePath}${h}` : h);
+  const scrolled = useScrolled();
+  useLockBody(open);
 
   return (
     <header
@@ -44,11 +26,9 @@ export function SiteHeader({ basePath = "" }: { basePath?: string }) {
           scrolled ? "glass-strong py-2.5" : "glass py-3.5",
         )}
       >
-        <Link
-          href={`${basePath}#top`}
-          className="shrink-0"
-          aria-label={`${site.name} home`}
-        >
+        {/* Hash-only hrefs resolve against the current route, so the same links
+            work on the home page and on both vertical pages. */}
+        <Link href="#top" className="shrink-0" aria-label={`${site.name} home`}>
           <Image
             src={site.logo}
             alt={site.name}
@@ -63,7 +43,7 @@ export function SiteHeader({ basePath = "" }: { basePath?: string }) {
           {navLinks.map((link) => (
             <li key={link.label}>
               <Link
-                href={href(link.href)}
+                href={link.href}
                 className="font-mono text-[11px] uppercase tracking-[0.18em] text-slate-300 transition-colors duration-300 hover:text-cyan-300"
               >
                 {link.label}
@@ -74,7 +54,7 @@ export function SiteHeader({ basePath = "" }: { basePath?: string }) {
 
         <div className="flex items-center gap-3">
           <Link
-            href={`${basePath}#contact`}
+            href="#contact"
             data-testid="nav-cta"
             className="hidden rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-5 py-2.5 font-display text-[11px] font-bold uppercase tracking-wider text-ink transition-transform duration-300 hover:scale-[1.04] sm:inline-flex"
           >
@@ -104,7 +84,7 @@ export function SiteHeader({ basePath = "" }: { basePath?: string }) {
             {navLinks.map((link) => (
               <li key={link.label}>
                 <Link
-                  href={href(link.href)}
+                  href={link.href}
                   onClick={() => setOpen(false)}
                   className="block rounded-xl px-3 py-3 font-mono text-xs uppercase tracking-[0.18em] text-slate-300 transition-colors hover:bg-white/5 hover:text-cyan-300"
                 >
@@ -114,7 +94,7 @@ export function SiteHeader({ basePath = "" }: { basePath?: string }) {
             ))}
           </ul>
           <Link
-            href={`${basePath}#contact`}
+            href="#contact"
             onClick={() => setOpen(false)}
             className="mt-4 flex items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-5 py-3.5 font-display text-xs font-bold uppercase tracking-wider text-ink"
           >

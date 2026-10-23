@@ -3,11 +3,11 @@
 import { useState, useTransition } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowLeft, ArrowRight, Check, Send } from "lucide-react";
-import { submitEnquiry } from "@/app/actions/submit-enquiry";
+import { submitEnquiry } from "@/services/leads";
 import { formSteps } from "@/content/home";
 import { serviceOptions } from "@/content/site";
-import { EASE } from "@/lib/motion";
-import { STEP_FIELDS, enquirySchema, type EnquiryInput } from "@/lib/schema";
+import { EASE } from "@/utils/motion";
+import { STEP_FIELDS, enquirySchema, type EnquiryInput } from "@/utils/validation";
 
 const EMPTY: EnquiryInput = {
   first_name: "",

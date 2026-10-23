@@ -1,7 +1,7 @@
 "use server";
 
-import { enquirySchema } from "@/lib/schema";
-import { getSupabaseClient } from "@/lib/supabase";
+import { enquirySchema } from "@/utils/validation";
+import { getSupabaseClient } from "@/services/supabase";
 
 export type SubmitResult =
   | { ok: true }
