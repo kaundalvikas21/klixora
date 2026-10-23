@@ -31,9 +31,14 @@ export function Services() {
 
           <Link
             href="#contact"
-            className="inline-flex shrink-0 items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-cyan-300 transition-colors duration-300 hover:text-cyan-200"
+            data-testid="services-cta"
+            className="group inline-flex shrink-0 items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-slate-300 transition-colors duration-300 hover:text-cyan-300"
           >
-            Get a free audit <ArrowRight size={14} />
+            Get a free audit
+            <ArrowRight
+              size={14}
+              className="transition-transform duration-300 group-hover:translate-x-1.5"
+            />
           </Link>
         </Reveal>
 
