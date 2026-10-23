@@ -9,7 +9,7 @@ original Emergent preview SPA, on an owned, deployable foundation.
 |---|---|
 | Framework | Next.js 16 (App Router, Turbopack, Cache Components) |
 | UI | React 19, Tailwind CSS v4 (CSS-first `@theme`), shadcn/ui token conventions |
-| Motion | Motion 14 (`motion/react`) + Lenis smooth scroll |
+| Motion | Motion 14 (`motion/react`); smooth scroll is native CSS |
 | Icons | Lucide |
 | Tests | Playwright + axe-core |
 
@@ -53,12 +53,12 @@ src/
 │   │   ├── page.tsx       # /
 │   │   ├── agri-marketing/page.tsx
 │   │   └── event-management/page.tsx
-│   ├── layout.tsx         # root: html/body, fonts, Lenis
+│   ├── layout.tsx         # root: html/body, fonts, metadata
 │   ├── globals.css        # design tokens + utilities
 │   ├── error.tsx  not-found.tsx
 │   └── sitemap.ts  robots.ts
 ├── components/
-│   ├── layout/            # header, footer, WhatsApp FAB, Lenis provider
+│   ├── layout/            # header, footer, WhatsApp FAB
 │   ├── motion/            # Reveal, StatCounter, TiltCard
 │   ├── sections/          # one file per section; sub/ = vertical template
 │   └── ui/                # SectionHeading, JsonLd
@@ -79,8 +79,46 @@ Nav links are hash-only (`#services`), which the browser resolves against the
 current route. The same header works on all three pages with no per-page props.
 
 Pages and section shells are **server components**. Only the pieces that need
-browser APIs are `'use client'`: the Lenis provider, header, tilt cards, stat
-counters, carousel, reveals and the contact form.
+browser APIs are `'use client'`: the header, tilt cards, stat counters,
+carousel, reveals and the contact form.
+
+## Scrolling
+
+Smooth scrolling is `scroll-behavior: smooth` on `<html>` — no JS scroll
+library. A hijacking library (Lenis, Locomotive) replaces the browser's own
+scroll with a rAF loop, which costs you native wheel momentum, trackpad
+inertia and an honest scrollbar, and stutters when a frame is dropped.
+
+Anchored sections carry `scroll-margin-top: 6rem` so they clear the fixed
+header instead of hiding under it. Under `prefers-reduced-motion`, smooth
+scrolling reverts to `auto`.
+
+## Routing and proxy
+
+There is deliberately no `proxy.ts`. Every route is statically prerendered and
+nothing needs to run per-request — no auth, no locale negotiation, no
+rewrites. A proxy would put a Node function in front of files a CDN can serve
+on its own.
+
+Add one when you need auth gating, redirects, locale routing or A/B bucketing.
+In Next 16 the file is `proxy.ts` at the project root (`src/proxy.ts` here) —
+`middleware.ts` and the `middleware` named export are **deprecated**:
+
+```ts
+// src/proxy.ts
+import { NextResponse, type NextRequest } from "next/server";
+
+export function proxy(request: NextRequest) {
+  return NextResponse.next();
+}
+
+export const config = { matcher: ["/((?!_next/static|_next/image|.*\\..*).*)"] };
+```
+
+The runtime is `nodejs` and is not configurable; `edge` is unsupported in
+`proxy`. Config flags renamed too — `skipMiddlewareUrlNormalize` is now
+`skipProxyUrlNormalize`. Response headers belong in `next.config.ts` under
+`headers()`, not in a proxy.
 
 ## Design system
 
